@@ -25,15 +25,6 @@
 
 {% set k = d.kpis %}{% set ef = d.efficiency %}{% set m = d.meta %}
 
-<!-- ============== HERO ============== -->
-<section class="hero">
-  <div class="eyebrow">Senior Data Analyst Case Study · 2024</div>
-  <h1>We spent <em>€{{ "%.2f"|format(k.total_spend/1e6) }}M</em> in 2024.<br>Here's where the next million should go.</h1>
-  <p class="hero-sub">
-    Five questions from the brief — answered with data. Spend grew <strong>{{ ef.spend_growth_pct }}%</strong> while paid conversions grew only <strong>{{ ef.conv_growth_pct }}%</strong>. The analysis below explains why, and what to do about it.
-  </p>
-</section>
-
 <!-- ============== ANALYST CARD ============== -->
 <div class="analyst-card">
   <img class="analyst-photo" src="{{ url_for('static', filename='img/mojtaba.jpg') }}" alt="Mojtaba Peyrovi">
@@ -47,6 +38,15 @@
     </div>
   </div>
 </div>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="eyebrow">Senior Data Analyst Case Study · 2024</div>
+  <h1>We spent <em>€{{ "%.2f"|format(k.total_spend/1e6) }}M</em> in 2024.<br>Here's where the next million should go.</h1>
+  <p class="hero-sub">
+    Five questions from the brief — answered with data. Spend grew <strong>{{ ef.spend_growth_pct }}%</strong> while paid conversions grew only <strong>{{ ef.conv_growth_pct }}%</strong>. The analysis below explains why, and what to do about it.
+  </p>
+</section>
 
 <!-- ============== QUESTION NAVIGATOR ============== -->
 <div class="q-nav">
