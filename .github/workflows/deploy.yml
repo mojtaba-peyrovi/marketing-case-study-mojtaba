@@ -4,15 +4,16 @@ on:
   push:
     branches: [main]
 
-env:
-  REGION: europe-west1
-  SERVICE: marketing-case-study-mojtaba
-  IMAGE: gcr.io/${{ secrets.GCP_PROJECT_ID }}/marketing-case-study-mojtaba
-
 jobs:
   deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
+
+    # Secrets are accessible at job level (NOT workflow level)
+    env:
+      REGION: europe-west1
+      SERVICE: marketing-case-study-mojtaba
+      IMAGE: gcr.io/${{ secrets.GCP_PROJECT_ID }}/marketing-case-study-mojtaba
 
     steps:
       - name: Checkout code
@@ -57,3 +58,4 @@ jobs:
             --region ${{ env.REGION }} \
             --format 'value(status.url)')
           echo "Deployed to: $URL"
+          echo "SERVICE_URL=$URL" >> $GITHUB_STEP_SUMMARY
