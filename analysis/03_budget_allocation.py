@@ -159,8 +159,8 @@ def run(df_full, df_conv):
             "confidence": "High",
         },
         {
-            "hypothesis": "The English and French markets are under-invested relative to their growth potential",
-            "evidence": "German market receives the bulk of paid spend and leads by subscribers. French and English have not been tested with comparable investment.",
+            "hypothesis": "The English- and French-language audiences are under-invested relative to their growth potential",
+            "evidence": "The German-language audience receives the bulk of paid spend and leads by subscribers. French- and English-language audiences have not been tested with comparable investment.",
             "recommendation": "Allocate a 3-month test budget (10% of total) split equally across French and English, mirroring the German channel mix.",
             "confidence": "Medium",
         },

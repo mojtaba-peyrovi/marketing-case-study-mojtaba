@@ -49,7 +49,7 @@ def _chart_heatmap(df_full):
         linewidths=0.5, linecolor="#E0E0E0",
         cbar_kws={"label": "New Subscribers"},
     )
-    ax.set_title("New Subscribers by Market and Month — 2024", pad=12)
+    ax.set_title("New Subscribers by Language Group and Month — 2024", pad=12)
     ax.set_xlabel("")
     ax.set_ylabel("")
     fig.tight_layout()
@@ -113,7 +113,7 @@ def _chart_conversion_split(df_conv):
 
     ax.set_xticks(list(x))
     ax.set_xticklabels(split["Market"])
-    ax.set_title("Conversion Split: Monthly vs Yearly Subscriptions by Market — 2024")
+    ax.set_title("Conversion Split: Monthly vs Yearly Subscriptions by Language Group — 2024")
     ax.set_ylabel("Share of Conversions (%)")
     ax.set_ylim(0, 100)
     ax.legend()
@@ -158,9 +158,9 @@ def run(df_full, df_conv):
 
     patterns = [
         {
-            "pattern": "German market dominates year-round",
-            "description": "The heatmap shows consistently higher subscriber counts for German across all 12 months. Summer months (Jun–Sep) show a notable peak for German.",
-            "implication": "German is the core market. Campaign timing should align with the Jun–Sep peak. French and English show flat, low volumes suggesting untapped potential.",
+            "pattern": "German-language audience dominates year-round",
+            "description": "The heatmap shows consistently higher subscriber counts for the German-language audience across all 12 months. Summer months (Jun–Sep) show a notable peak.",
+            "implication": "The German-language audience is the core customer base. Campaign timing should align with the Jun–Sep peak. French- and English-language audiences show flat, low volumes suggesting untapped potential.",
             "chart": "heatmap_market_month.png",
         },
         {
@@ -170,8 +170,8 @@ def run(df_full, df_conv):
             "chart": "coupon_trend.png",
         },
         {
-            "pattern": "Yearly subscriptions overwhelmingly dominate across all markets",
-            "description": "The conversion split shows >80% of conversions are yearly subscriptions across German, French, and English markets.",
+            "pattern": "Yearly subscriptions overwhelmingly dominate across all language groups",
+            "description": "The conversion split shows >80% of conversions are yearly subscriptions across German-, French-, and English-language audiences.",
             "implication": "The 30-day trial mechanic for yearly plans is a strong acquisition driver. Monthly plans may serve as a backup/entry option rather than a primary acquisition vehicle.",
             "chart": "conversion_split.png",
         },

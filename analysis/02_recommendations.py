@@ -55,10 +55,10 @@ def _chart_monthly_trend(df_full):
 
     ax.set_xticks(range(1, 13))
     ax.set_xticklabels(["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"])
-    ax.set_title("Monthly New Subscribers by Market — 2024")
+    ax.set_title("Monthly New Subscribers by Language Group — 2024")
     ax.set_xlabel("Month")
     ax.set_ylabel("New Subscribers")
-    ax.legend(title="Market")
+    ax.legend(title="Language Group")
     fig.tight_layout()
     save_chart(fig, os.path.join(OUTPUT_CHART, "monthly_trend.png"))
 
@@ -157,7 +157,7 @@ def _chart_coupon_vs_conversion(df_conv):
     ax.set_title("Coupon Usage vs Conversion Rate by Channel")
     ax.set_xlabel("Coupon Usage (%)")
     ax.set_ylabel("Conversion Rate (Conversions / Subscribers)")
-    ax.legend(title="Market")
+    ax.legend(title="Language Group")
     fig.tight_layout()
     save_chart(fig, os.path.join(OUTPUT_CHART, "coupon_vs_conversion.png"))
 
@@ -173,8 +173,8 @@ def run(df_full, df_conv):
 
     recommendations = [
         {
-            "action": "Scale Influencer Instagram spend in the German market",
-            "evidence": "Influencer Instagram is the single highest-spend channel and delivers the strongest subscriber volumes. German market shows peak subscriber counts Jun–Oct.",
+            "action": "Scale Influencer Instagram spend in the German-language audience",
+            "evidence": "Influencer Instagram is the single highest-spend channel and delivers the strongest subscriber volumes. The German-language audience shows peak subscriber counts Jun–Oct.",
             "expected_impact": "10–15% lift in new subscriber volume if spend is increased by 20% in Q3.",
             "chart": "monthly_trend.png",
         },
@@ -203,8 +203,8 @@ def run(df_full, df_conv):
             "chart": None,
         },
         {
-            "action": "Expand French and English market campaigns with localised creatives",
-            "evidence": "German market outperforms French and English by a wide margin. Platform is available in all three languages but marketing investment appears Germany-heavy.",
+            "action": "Expand French- and English-language audience campaigns with localised creatives",
+            "evidence": "The German-language audience outperforms French- and English-language audiences by a wide margin. The platform is available in all three languages but marketing investment appears skewed toward German-language content.",
             "expected_impact": "Estimated 20–30% incremental subscriber growth if French/English channels receive proportional investment.",
             "chart": "monthly_trend.png",
         },

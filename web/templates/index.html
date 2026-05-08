@@ -138,8 +138,8 @@
     <div class="finding">
       <div class="finding-num f3">3</div>
       <div>
-        <div class="finding-head">The English market is leaking. The German market is humming.</div>
-        <div class="finding-body">Germany returns <strong>{{ d.markets[0].roas }}×</strong> on every €1 spent and converts {{ d.markets[0].t2p_pct }}% of trial users to paying subscribers. English spends €{{ "%.0fk"|format(d.markets[2].spend/1000) }} for {{ d.markets[2].roas }}× return and converts just <strong>{{ d.markets[2].t2p_pct }}%</strong> of trials. The post-acquisition drop-off may point to a product, onboarding, or payment issue — but funnel-stage data (impressions → clicks → trial starts → paid) would be needed to confirm where the loss occurs.</div>
+        <div class="finding-head">The English-language audience is leaking. The German-language audience is humming.</div>
+        <div class="finding-body">The German-language audience returns <strong>{{ d.markets[0].roas }}×</strong> on every €1 spent and converts {{ d.markets[0].t2p_pct }}% of trial users to paying subscribers. The English-language audience spends €{{ "%.0fk"|format(d.markets[2].spend/1000) }} for {{ d.markets[2].roas }}× return and converts just <strong>{{ d.markets[2].t2p_pct }}%</strong> of trials. The post-acquisition drop-off may point to a product, onboarding, or payment issue — but funnel-stage data (impressions → clicks → trial starts → paid) would be needed to confirm where the loss occurs.</div>
       </div>
     </div>
   </div>
@@ -154,7 +154,7 @@
     <div class="kpi-card">
       <div class="kpi-label">New Subscribers</div>
       <div class="kpi-value">{{ "%.0f"|format(k.total_subs/1000) }}k</div>
-      <div class="kpi-trend up">{{ k.dachfr_share_pct }}% from DACH + FR</div>
+      <div class="kpi-trend up">{{ k.dachfr_share_pct }}% from German- & French-language audiences</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">New Revenue (Invoice Date)</div>
@@ -398,7 +398,7 @@
       <div style="display:flex;flex-direction:column;gap:18px;margin-top:16px;">
         <div>
           <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Influencer IG sends the highest-quality users.</div>
-          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">29% of Influencer IG trials convert to paid — compared to 21% for TikTok Ads and {{ d.markets[2].t2p_pct }}% for the English market average. That means 8–11% more paying customers for the same number of trial starts.</div>
+          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">29% of Influencer IG trials convert to paid — compared to 21% for TikTok Ads and {{ d.markets[2].t2p_pct }}% for the English-language audience average. That means 8–11% more paying customers for the same number of trial starts.</div>
         </div>
         <div>
           <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Paid social underperforms organic on quality.</div>
@@ -409,8 +409,8 @@
           <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">20.6% trial-to-paid at €70 CAC. The channel was paused after September. This data confirms the pause was the right call.</div>
         </div>
         <div>
-          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Anomaly · The English market has the lowest trial-to-paid rate.</div>
-          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">{{ d.markets[2].t2p_pct }}% — the lowest of any market. Possible causes include payment method coverage, content depth, or paywall friction, but funnel-stage data is needed to confirm the source of the drop-off.</div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Anomaly · The English-language audience has the lowest trial-to-paid rate.</div>
+          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">{{ d.markets[2].t2p_pct }}% — the lowest across all language groups. Possible causes include payment method coverage, content depth, or paywall friction, but funnel-stage data is needed to confirm the source of the drop-off.</div>
         </div>
       </div>
     </div>
@@ -418,8 +418,8 @@
 
   <!-- Markets -->
   <div class="section-head" style="margin-bottom:20px;">
-    <h2>Pattern · Three markets, <em>three different</em> stories</h2>
-    <div class="section-sub">The same channel mix produces very different results — that's a signal worth investigating.</div>
+    <h2>Pattern · Three language groups, <em>three different</em> stories</h2>
+    <div class="section-sub">The same channel mix produces very different results across language audiences — that's a signal worth investigating.</div>
   </div>
 
   <!-- Trial-to-paid per market summary -->
@@ -429,7 +429,7 @@
     {% set flags = {'de': '🇩🇪', 'fr': '🇫🇷', 'en': '🇬🇧'} %}
     <div class="t2p-market-bar">
       <div class="t2p-market-label">
-        <span>{{ flags[mk.code] }} {{ 'Germany' if mk.name == 'German' else ('France' if mk.name == 'French' else 'English') }}</span>
+        <span>{{ 'German-speaking' if mk.name == 'German' else ('French-speaking' if mk.name == 'French' else 'English-speaking') }}</span>
         <strong class="t2p-market-pct t2p-{{ mk.code }}">{{ mk.t2p_pct }}%</strong>
       </div>
       <div class="t2p-track">
@@ -439,21 +439,19 @@
     </div>
     {% endfor %}
     <div class="t2p-market-callout">
-      English market converts <strong>{{ "%.0f"|format(d.markets[0].t2p_pct - d.markets[2].t2p_pct) }} percentage points fewer</strong> trials than Germany — on a similar CAC (€{{ d.markets[2].cac }} vs €{{ d.markets[0].cac }}). Fixing the English funnel would yield more paying subscribers without any additional spend.
+      The English-language audience converts <strong>{{ "%.0f"|format(d.markets[0].t2p_pct - d.markets[2].t2p_pct) }} percentage points fewer</strong> trials than the German-language audience — on a similar CAC (€{{ d.markets[2].cac }} vs €{{ d.markets[0].cac }}). Fixing the English-language funnel would yield more paying subscribers without any additional spend.
     </div>
   </div>
   <div class="grid-3">
-    {% set flags = {'de': '🇩🇪', 'fr': '🇫🇷', 'en': '🇬🇧'} %}
     {% set verdicts = {'de': 'Flagship', 'fr': 'Optimize', 'en': 'Fix Funnel'} %}
     {% set stories = {
-      'de': 'The engine. Best CAC across all markets, and the only market where return on spend exceeds 1.0×. Google Ads in Germany returns exceptionally high — the strongest signal in the dataset.',
-      'fr': 'Healthy intent — highest trial-to-paid rate and highest revenue per conversion — but expensive to reach: ~44% higher CAC than Germany. Coupon usage is highest here; the pricing and promotion strategy needs review.',
-      'en': 'Trial-to-paid is ~10 percentage points below the other markets. This may indicate a product, onboarding, or payment issue — but the dataset lacks funnel-stage data (impressions → clicks → trial starts) needed to confirm where the drop-off occurs. Scaling spend should be approached cautiously until the root cause is understood.'
+      'de': 'The engine. Best CAC across all language groups, and the only audience where return on spend exceeds 1.0×. Google Ads in the German-language segment returns exceptionally high — the strongest signal in the dataset.',
+      'fr': 'Healthy intent — highest trial-to-paid rate and highest revenue per conversion — but expensive to reach: ~44% higher CAC than the German-language audience. Coupon usage is highest here; the pricing and promotion strategy needs review.',
+      'en': 'Trial-to-paid is ~10 percentage points below the other language groups. This may indicate a product, onboarding, or payment issue — but the dataset lacks funnel-stage data (impressions → clicks → trial starts) needed to confirm where the drop-off occurs. Scaling spend should be approached cautiously until the root cause is understood.'
     } %}
     {% for mk in d.markets %}
     <div class="market-card {{ mk.code }}">
-      <div class="market-flag">{{ flags[mk.code] }}</div>
-      <div class="market-name">{{ 'Germany' if mk.name == 'German' else ('France' if mk.name == 'French' else 'English Markets') }}</div>
+      <div class="market-name">{{ 'German-speaking' if mk.name == 'German' else ('French-speaking' if mk.name == 'French' else 'English-speaking') }}</div>
       <div class="market-verdict">{{ verdicts[mk.code] }}</div>
       <div class="market-metrics">
         <div class="market-metric">
@@ -597,7 +595,7 @@
       <ul>
         <li>CAC = spend ÷ (monthly paid + yearly paid conversions) — post-trial, not trial-starts</li>
         <li>ROAS uses New Revenue (Invoice Date) — confirmed payments only, not trial starters who may never pay</li>
-        <li>UNKNOWN market and channel rows (~25%) are excluded from per-market analysis</li>
+        <li>UNKNOWN language-group and channel rows (~25%) are excluded from per-language-group analysis</li>
         <li>Rows with null conversion data are excluded from trial-to-paid calculations</li>
         <li>One anomalous coupon value (1.33 in PR / English / February) is clamped to 1.0</li>
       </ul>
@@ -670,7 +668,7 @@
         <strong>Why Invoice Date?</strong> Invoice Date counts only revenue from customers who actually paid — confirmed cash received. Create Date would include trial starters who never convert, overstating how much a channel earns. A ROAS above 1.0× means the channel returns more in confirmed revenue than it costs.
       </div>
       <div class="metric-def-example">
-        Example: German invoice revenue ÷ €3,309,947 German spend = <strong>{{ "%.2f"|format(d.markets[0].roas) }}× ROAS</strong>
+        Example: German-language audience invoice revenue ÷ €3,309,947 German-language spend = <strong>{{ "%.2f"|format(d.markets[0].roas) }}× ROAS</strong>
       </div>
     </div>
 
@@ -678,7 +676,7 @@
       <div class="metric-def-name">Blended ROAS</div>
       <div class="metric-def-formula">Total New Revenue (Invoice Date) ÷ Total Marketing Spend</div>
       <div class="metric-def-note">
-        <strong>Same formula as channel ROAS, applied company-wide.</strong> Sums all markets and channels. Useful as a single top-line efficiency number for the CEO — but hides the variation between channels, which is where the actionable insight lives.
+        <strong>Same formula as channel ROAS, applied company-wide.</strong> Sums all language groups and channels. Useful as a single top-line efficiency number for the CEO — but hides the variation between channels, which is where the actionable insight lives.
       </div>
       <div class="metric-def-example">
         Example: €{{ "{:,.0f}".format(d.kpis.total_rev_invoice) }} total invoice revenue ÷ €{{ "{:,.0f}".format(d.kpis.total_spend) }} total spend = <strong>{{ d.kpis.blended_roas }}× blended ROAS</strong>
@@ -703,7 +701,7 @@
         <strong>Why use Invoice Date here?</strong> ARPU reflects actual cash received per paying subscriber — the most useful number for understanding subscription value by market. Monthly subscribers pay immediately; yearly subscribers pay after 30 days. Invoice Date captures both correctly.
       </div>
       <div class="metric-def-example">
-        Example: France invoice revenue ÷ France paid conversions = <strong>€{{ "%.2f"|format(d.markets[1].arpu) }} per paying subscriber</strong>
+        Example: French-language audience invoice revenue ÷ French-language paid conversions = <strong>€{{ "%.2f"|format(d.markets[1].arpu) }} per paying subscriber</strong>
       </div>
     </div>
 

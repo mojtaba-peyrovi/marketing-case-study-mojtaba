@@ -118,7 +118,7 @@ def run(df_full, df_conv):
         )
 
     findings = [
-        f"German market dominates with the highest subscriber volume ({top_market_subs} is the top market by subscribers).",
+        f"The German-language audience dominates with the highest subscriber volume ({top_market_subs} is the top language group by subscribers).",
         f"Overall ROAS is {overall_roas}x — for every €1 spent on marketing, the Company generates €{overall_roas} in new subscription revenue.",
         f"Non-Paid channels (organic, influencer, content) drive significant subscriber volume at €0 direct spend, confirming strong brand pull.",
         f"Coupon adoption averages {round(avg_coupon_usage*100,1)}% of conversions — a key acquisition lever but worth monitoring for margin impact.",
@@ -138,7 +138,7 @@ def run(df_full, df_conv):
 
     recommendations = [
         "Double down on Influencer channels — they deliver subscribers at scale with measurable ROAS.",
-        "Investigate the French and English market underperformance relative to German; test localised content campaigns.",
+        "Investigate the French- and English-language audience underperformance relative to the German-language audience; test localised content campaigns.",
         "Set a coupon usage ceiling (e.g. 35%) to protect revenue per subscriber while maintaining conversion volume.",
         "Use Invoice Date revenue as the single standard for all ROAS reporting — it counts only confirmed payments.",
         "Invest in Organic Search (SEO) — currently zero direct spend with meaningful subscriber contribution.",

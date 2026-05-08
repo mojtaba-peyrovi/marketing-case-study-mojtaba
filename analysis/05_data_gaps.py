@@ -78,7 +78,7 @@ def run(df_full, df_conv):
         },
         {
             "gap": "UNKNOWN market rows (288 rows, 25% of dataset)",
-            "impact": "One quarter of all rows cannot be attributed to a geographic market. This prevents accurate per-market budget allocation and ROAS analysis.",
+            "impact": "One quarter of all rows cannot be attributed to a language audience. This prevents accurate per-audience budget allocation and ROAS analysis.",
             "suggested_data_source": "Improve UTM tagging and attribution logic in the marketing stack. Audit the pipeline that assigns market labels.",
             "priority": "High",
         },
