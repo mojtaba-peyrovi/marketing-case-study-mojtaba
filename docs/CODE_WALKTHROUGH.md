@@ -34,7 +34,7 @@ These four files run in sequence every time the Docker image is built.
 - The `REQUIRED_COLUMNS` list at the top — shows exactly which columns are expected
 - The `load_data()` function — follow it line by line to see every transformation
 - The `paid_conversions` column: `Monthly Paid Conversions + Yearly Paid Conversions` — this is the denominator in CAC. Both plan types (monthly and yearly) are summed because both represent real paying customers; CAC should reflect the cost to acquire any paying subscriber regardless of which plan they chose
-- The coupon clamping block: one known anomaly in the real data (PR / English / February has `Share Coupon Used = 1.3333`, which is impossible for a ratio). The value is clamped to 1.0 here and flagged for the data team in `validate_data.py`
+- The coupon clamping block: one known anomaly in the real data (PR / English / February has `Share Coupon Used = 1.3333`, which is impossible for a ratio). The value is clamped to 1.0 here and flagged for the data team in `validate_data.py`. (A data quality test is added to capture this error anytime in data digestion step)
 - Returns two DataFrames: `df_full` (all 1,152 rows) and `df_conv` (the 434 rows that have non-null conversion data)
 
 ### `analysis/validate_data.py`

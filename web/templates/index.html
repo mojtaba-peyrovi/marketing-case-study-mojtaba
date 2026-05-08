@@ -718,6 +718,32 @@
   </div>
 </div>
 
+<!-- ============== DATA INTEGRITY ============== -->
+<div class="privacy-banner">
+  <div class="privacy-banner-inner integrity-banner">
+    <div class="lock-icon integrity-icon">✓</div>
+    <div>
+      <strong>Data Integrity Guardrails — How do we guarantee inaccurate data won't silently slip into the analysis?</strong>
+      Every Docker build runs a strict validation step before any analysis script executes. If the raw data is
+      corrupt or missing required structure, the build fails immediately with a plain-English error so the data team
+      can fix the problem at source — a broken dataset can never silently produce wrong numbers in the final report.
+      <div class="integrity-checks">
+        Checks performed:
+        <ul>
+          <li>Required columns all present</li>
+          <li>All 12 calendar months represented</li>
+          <li>At least 3 known markets</li>
+          <li>Marketing Spendings never negative</li>
+          <li>Subscriber counts never negative</li>
+          <li>Coupon usage shares between 0% and 100%</li>
+          <li>Yearly Paid Conversions never exceed Yearly Conversions</li>
+          <li>No completely empty rows</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="brand-mark">F</div>
   <div style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:var(--ink);margin-bottom:8px;">Marketing Performance Diagnostic 2024</div>
