@@ -534,12 +534,12 @@
         </tr>
         <tr>
           <td><code>Monthly Conversions</code><br><code>Yearly Conversions</code></td>
-          <td>Sounds like "conversions aggregated by month/year." Actually means "subscribers who chose a monthly plan" vs "subscribers who chose a yearly plan." The time dimension is unrelated to the plan type.</td>
+          <td>Sounds like "conversions aggregated by month/year." Actually means "subscribers who chose a monthly plan" vs "subscribers who chose a yearly plan." The time dimension is unrelated to the plan type. Also, "conversion" here means <em>trial start</em> — but elsewhere in the analysis "conversion" means a paying subscriber. Same word, two definitions.</td>
           <td><code>monthly_plan_starts</code>, <code>yearly_plan_starts</code></td>
         </tr>
         <tr>
           <td><code>Monthly Paid Conversions</code><br><code>Yearly Paid Conversions</code></td>
-          <td>Same ambiguity as above, plus "Paid" is vague — does it mean the plan is paid, or that the customer has paid?</td>
+          <td>Same ambiguity as above, plus "Paid" is vague — does it mean the plan is paid, or that the customer has paid? And the word "Conversions" overlaps with the trial-start columns above, even though only this pair matches the analysis-wide definition of "conversion" (a paying subscriber).</td>
           <td><code>monthly_plan_paid</code>, <code>yearly_plan_paid</code></td>
         </tr>
         <tr>
