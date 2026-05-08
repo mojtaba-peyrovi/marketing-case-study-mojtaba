@@ -9,6 +9,7 @@ dist/
 build/
 .venv/
 venv/
-docs/
+docs/*.xlsx
+docs/*.pdf
 *.txt
 data/
