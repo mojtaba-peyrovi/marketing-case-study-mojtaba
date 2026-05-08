@@ -677,13 +677,13 @@
     </div>
 
     <div class="metric-def-card">
-      <div class="metric-def-name">Revenue per Conversion (ARPU)</div>
+      <div class="metric-def-name">Revenue per Paying Subscriber (ARPU)</div>
       <div class="metric-def-formula">New Revenue (Invoice Date) ÷ (Monthly Paid + Yearly Paid Conversions)</div>
       <div class="metric-def-note">
-        <strong>Why use Invoice Date here?</strong> Revenue per conversion reflects actual cash received per paying subscriber — the most useful number for understanding subscription value by market. Monthly subscribers pay immediately; yearly subscribers pay after 30 days. Invoice Date captures both correctly.
+        <strong>Why use Invoice Date here?</strong> ARPU reflects actual cash received per paying subscriber — the most useful number for understanding subscription value by market. Monthly subscribers pay immediately; yearly subscribers pay after 30 days. Invoice Date captures both correctly.
       </div>
       <div class="metric-def-example">
-        Example: France invoice revenue ÷ France paid conversions = <strong>€{{ "%.2f"|format(d.markets[1].arpu) }} per conversion</strong>
+        Example: France invoice revenue ÷ France paid conversions = <strong>€{{ "%.2f"|format(d.markets[1].arpu) }} per paying subscriber</strong>
       </div>
     </div>
 

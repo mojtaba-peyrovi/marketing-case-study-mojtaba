@@ -69,8 +69,26 @@
           y: {
             beginAtZero: true,
             grid: { color: '#E6DCD0', drawBorder: false },
+            title: {
+              display: true,
+              text: 'Index (January 2024 = 100)',
+              color: '#7A7068',
+              font: { size: 11, weight: '600', family: "'Inter', sans-serif" }
+            },
+            ticks: {
+              callback: function(v) { return v; }
+            }
           },
           x: { grid: { display: false } }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ctx.dataset.label + ': ' + ctx.parsed.y + ' (Jan = 100)';
+              }
+            }
+          }
         }
       }
     });
