@@ -7,7 +7,7 @@ Methodology:
 - Aggregate total subscribers, revenue, and spend across the full year
 - Compute ROAS and Cost-per-Subscriber by market and channel type
 - Identify top performers and efficiency leaders
-- Flag the Create Date vs Invoice Date revenue gap as a cash-flow signal
+- Use Invoice Date revenue throughout (confirmed payments only)
 
 Output: output/data/executive_summary.json
 """
@@ -28,9 +28,9 @@ def run(df_full, df_conv):
     # ── Totals ──────────────────────────────────────────────────────────────
     total_subscribers = int(df_full["Subscriber"].sum())
     total_spend = int(df_full["Marketing Spendings"].sum())
-    total_revenue_create = float(df_full["New Revenue Create Date"].sum())
     total_revenue_invoice = float(df_full["New Revenue Invoice Date"].sum())
-    overall_roas = round(total_revenue_create / total_spend, 2) if total_spend > 0 else None
+    total_revenue_invoice = float(df_full["New Revenue Invoice Date"].sum())
+    overall_roas = round(total_revenue_invoice / total_spend, 2) if total_spend > 0 else None
 
     # ── By Market ────────────────────────────────────────────────────────────
     market_df = df_full[df_full["Market"] != "UNKNOWN"]
@@ -39,7 +39,7 @@ def run(df_full, df_conv):
         .agg(
             subscribers=("Subscriber", "sum"),
             spend=("Marketing Spendings", "sum"),
-            revenue=("New Revenue Create Date", "sum"),
+            revenue=("New Revenue Invoice Date", "sum"),
         )
         .reset_index()
     )
@@ -55,7 +55,7 @@ def run(df_full, df_conv):
         .agg(
             subscribers=("Subscriber", "sum"),
             spend=("Marketing Spendings", "sum"),
-            revenue=("New Revenue Create Date", "sum"),
+            revenue=("New Revenue Invoice Date", "sum"),
         )
         .reset_index()
     )
@@ -79,7 +79,7 @@ def run(df_full, df_conv):
     avg_student_coupon = round(float(coupon_df["Share Student Coupon Used"].mean()), 4)
 
     # ── Revenue lag (Create vs Invoice) ──────────────────────────────────────
-    revenue_gap = round(total_revenue_invoice - total_revenue_create, 0)
+    revenue_gap = round(total_revenue_invoice - total_revenue_invoice, 0)
 
     # ── Monthly subscription share ────────────────────────────────────────────
     if len(df_conv) > 0:
@@ -98,7 +98,7 @@ def run(df_full, df_conv):
         f"Overall ROAS is {overall_roas}x — for every €1 spent on marketing, the Company generates €{overall_roas} in new subscription revenue.",
         f"Non-Paid channels (organic, influencer, content) drive significant subscriber volume at €0 direct spend, confirming strong brand pull.",
         f"Coupon adoption averages {round(avg_coupon_usage*100,1)}% of conversions — a key acquisition lever but worth monitoring for margin impact.",
-        f"Revenue recognition gap between Create Date and Invoice Date (€{abs(revenue_gap):,.0f} difference) reflects the 30-day trial mechanic for yearly plans.",
+        f"All ROAS figures use Invoice Date revenue — confirmed payments only, not trial starters who may never pay.",
         f"Yearly subscriptions dominate the conversion mix ({round(yearly_share*100,1)}%), indicating strong long-term product-market fit.",
     ]
 
@@ -106,7 +106,7 @@ def run(df_full, df_conv):
         "Double down on Influencer channels — they deliver subscribers at scale with measurable ROAS.",
         "Investigate the French and English market underperformance relative to German; test localised content campaigns.",
         "Set a coupon usage ceiling (e.g. 35%) to protect revenue per subscriber while maintaining conversion volume.",
-        "Close the Invoice Date revenue gap visibility: align financial reporting to Create Date for growth tracking.",
+        "Use Invoice Date revenue as the single standard for all ROAS reporting — it counts only confirmed payments.",
         "Invest in Organic Search (SEO) — currently zero direct spend with meaningful subscriber contribution.",
     ]
 
@@ -114,7 +114,7 @@ def run(df_full, df_conv):
         "totals": {
             "total_subscribers": total_subscribers,
             "total_spend_eur": total_spend,
-            "total_revenue_create_eur": round(total_revenue_create, 0),
+            "total_revenue_invoice_eur": round(total_revenue_invoice, 0),
             "total_revenue_invoice_eur": round(total_revenue_invoice, 0),
             "overall_roas": overall_roas,
             "revenue_gap_eur": revenue_gap,

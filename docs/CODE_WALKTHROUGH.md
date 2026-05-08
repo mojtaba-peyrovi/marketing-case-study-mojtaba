@@ -53,7 +53,7 @@ These four files run in sequence every time the Docker image is built.
 
 **Key things to read:**
 - The `CAC` calculation: `spend / paid_conversions` — uses the combined Monthly + Yearly Paid column from `data_loader.py`
-- The `ROAS` calculation: `New Revenue Create Date / Marketing Spendings` — uses subscription start date, not payment date, to align revenue with the campaign that caused it
+- The `ROAS` calculation: `New Revenue Invoice Date / Marketing Spendings` — uses confirmed payments only. Create Date would include trial starters who never pay, overstating ROAS
 - The `trial_to_paid` calculation: `Yearly Paid Conversions / Yearly Conversions` — measures what share of free trials converted to paying, per channel. This is a quality signal that CAC alone cannot capture
 - The `_verdict()` function — classification logic that assigns Scale / Reduce / Kill / Paused / Monitor to each channel based on its CAC, ROAS, and trial-to-paid rate
 - The market loop — aggregates the same metrics (spend, CAC, ROAS, trial-to-paid, ARPU) per market (German, French, English)

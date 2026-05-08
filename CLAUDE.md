@@ -91,8 +91,8 @@ Push to `main` → GitHub Actions builds the Docker image, pushes to GCR, deploy
 
 - **UNKNOWN market/channel rows** are excluded from main analysis but included in the data gaps section.
 - **Null conversions** (~62% of rows): only rows with `Conversion Channel 1 = Paid` or rows with tracked conversion funnels have conversion/revenue data. This is expected by dataset design.
-- **Revenue attribution**: Create Date used for trend analysis (subscription start); Invoice Date used for cash-flow analysis.
-- **ROAS** = New Revenue (Create Date) / Marketing Spendings; rows with 0 spend are excluded from ROAS calculation.
+- **Revenue attribution**: Invoice Date used for all ROAS calculations (confirmed payments only). Create Date is retained in the dataset for reference but not used in any metric.
+- **ROAS** = New Revenue (Invoice Date) / Marketing Spendings; rows with 0 spend are excluded from ROAS calculation.
 - **Cost per Subscriber** = Marketing Spendings / Subscriber count (where spend > 0).
 
 ---

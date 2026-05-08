@@ -8,7 +8,7 @@ analysis questions. Returns two DataFrames:
 
 Key assumptions:
 - UNKNOWN market/channel rows are tagged but kept in df_full; excluded from df_conv
-- Revenue uses New Revenue Create Date for trend analysis (subscription start date)
+- Revenue uses New Revenue Invoice Date (confirmed payments) for all ROAS calculations
 - ROAS = revenue_create_date / marketing_spendings (only where spend > 0)
 - Cost per Subscriber = marketing_spendings / subscriber (only where spend > 0)
 - Monthly name mapping uses standard Python calendar month abbreviations
@@ -62,17 +62,19 @@ def load_data():
         np.nan
     )
 
-    # ROAS: revenue (create date) per unit of spend
+    # ROAS: confirmed revenue (Invoice Date) per unit of spend.
+    # Invoice Date = revenue from customers who actually paid.
+    # Create Date would include trial starters who may never pay, overstating ROAS.
     df["roas"] = np.where(
         df["Marketing Spendings"] > 0,
-        df["New Revenue Create Date"].fillna(0) / df["Marketing Spendings"],
+        df["New Revenue Invoice Date"].fillna(0) / df["Marketing Spendings"],
         np.nan
     )
 
-    # Revenue per subscriber
+    # Revenue per subscriber (Invoice Date — confirmed payments only)
     df["revenue_per_subscriber"] = np.where(
         df["Subscriber"] > 0,
-        df["New Revenue Create Date"].fillna(0) / df["Subscriber"],
+        df["New Revenue Invoice Date"].fillna(0) / df["Subscriber"],
         np.nan
     )
 

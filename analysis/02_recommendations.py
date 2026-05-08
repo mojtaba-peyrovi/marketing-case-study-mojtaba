@@ -71,7 +71,7 @@ def _chart_roas_by_channel(df_full):
     ]
     channel_roas = (
         paid_df.groupby("Conversion Channel 2")
-        .apply(lambda g: g["New Revenue Create Date"].sum() / g["Marketing Spendings"].sum(), include_groups=False)
+        .apply(lambda g: g["New Revenue Invoice Date"].sum() / g["Marketing Spendings"].sum(), include_groups=False)
         .reset_index()
     )
     channel_roas.columns = ["Channel", "ROAS"]
@@ -185,8 +185,8 @@ def run(df_full, df_conv):
             "chart": "roas_by_channel.png",
         },
         {
-            "action": "Standardise revenue reporting on Create Date; use Invoice Date for cash-flow planning only",
-            "evidence": "The 30-day trial mechanic for yearly subscribers creates a systematic lag between Create Date and Invoice Date revenue. Mixing them distorts YoY comparisons.",
+            "action": "Standardise all ROAS reporting on Invoice Date (confirmed payments); use Create Date only for subscriber trend analysis",
+            "evidence": "Invoice Date counts only confirmed payments. Create Date includes trial starters who may never pay, which overstates channel revenue and inflates ROAS figures.",
             "expected_impact": "Cleaner P&L, more accurate growth attribution, and reliable forecasting.",
             "chart": "revenue_lag.png",
         },

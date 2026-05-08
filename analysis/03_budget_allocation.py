@@ -110,7 +110,7 @@ def run(df_full, df_conv):
         .agg(
             spend=("Marketing Spendings", "sum"),
             subscribers=("Subscriber", "sum"),
-            revenue=("New Revenue Create Date", "sum"),
+            revenue=("New Revenue Invoice Date", "sum"),
         )
         .reset_index()
         .rename(columns={"Conversion Channel 3": "channel"})

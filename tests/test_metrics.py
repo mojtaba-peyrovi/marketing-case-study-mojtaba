@@ -66,18 +66,21 @@ def test_cac_zero_spend_returns_nan():
 # ── ROAS tests ────────────────────────────────────────────────────────────────
 
 def test_roas_paid_channel():
-    """ROAS = New Revenue (Create Date) / Marketing Spend."""
+    """ROAS = New Revenue (Invoice Date) / Marketing Spend.
+    Invoice Date = confirmed payments only. Create Date would include trial starters
+    who may never pay, overstating ROAS.
+    """
     meta = MOCK_DF[MOCK_DF["Conversion Channel 3"] == "Facebook/Instagram Ads"].iloc[0]
-    # 8,000 revenue / 10,000 spend = 0.80
-    expected = 8_000 / 10_000
-    roas = meta["New Revenue Create Date"] / meta["Marketing Spendings"]
+    # 7,500 invoice revenue / 10,000 spend = 0.75
+    expected = 7_500 / 10_000
+    roas = meta["New Revenue Invoice Date"] / meta["Marketing Spendings"]
     assert abs(roas - expected) < 0.001, f"ROAS mismatch: {roas} vs {expected}"
 
 
 def test_roas_zero_spend_is_undefined():
     """ROAS for a non-paid channel should not be computed (would be division by zero)."""
     wom = MOCK_DF[MOCK_DF["Conversion Channel 3"] == "Word of Mouth"].iloc[0]
-    roas = np.where(wom["Marketing Spendings"] > 0, wom["New Revenue Create Date"] / wom["Marketing Spendings"], np.nan)
+    roas = np.where(wom["Marketing Spendings"] > 0, wom["New Revenue Invoice Date"] / wom["Marketing Spendings"], np.nan)
     assert math.isnan(float(roas)), "Zero-spend ROAS should be NaN"
 
 
@@ -113,11 +116,11 @@ def test_blended_roas():
 # ── Revenue per subscriber ────────────────────────────────────────────────────
 
 def test_revenue_per_subscriber():
-    """Revenue per subscriber = Revenue (Create Date) / Subscriber count."""
+    """Revenue per subscriber = Revenue (Invoice Date) / Subscriber count."""
     meta = MOCK_DF[MOCK_DF["Conversion Channel 3"] == "Facebook/Instagram Ads"].iloc[0]
-    # 8,000 / 500 = 16.0
-    expected = 8_000 / 500
-    rev_per_sub = meta["New Revenue Create Date"] / meta["Subscriber"]
+    # 7,500 / 500 = 15.0
+    expected = 7_500 / 500
+    rev_per_sub = meta["New Revenue Invoice Date"] / meta["Subscriber"]
     assert abs(rev_per_sub - expected) < 0.001, f"Revenue/sub mismatch: {rev_per_sub} vs {expected}"
 
 
