@@ -51,8 +51,12 @@ def load_data():
     # Total conversions (monthly + yearly, where available)
     df["total_conversions"] = df["Monthly Conversions"].fillna(0) + df["Yearly Conversions"].fillna(0)
 
-    # Customer Acquisition Cost (CAC): spend / new subscribers (industry-standard term)
-    df["cac"] = np.where(
+    # Loose CAC using all trial starters as denominator (Subscriber column = everyone
+    # who started a subscription, including free trials who never paid).
+    # NOTE: dashboard_data.py computes the stricter CAC used in the UI:
+    #   spend / (Monthly Paid + Yearly Paid Conversions) — confirmed paying customers only.
+    # This column exists for exploratory use; do not use it for CEO-facing metrics.
+    df["cac_loose"] = np.where(
         (df["Marketing Spendings"] > 0) & (df["Subscriber"] > 0),
         df["Marketing Spendings"] / df["Subscriber"],
         np.nan
