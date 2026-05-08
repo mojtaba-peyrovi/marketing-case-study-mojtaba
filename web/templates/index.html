@@ -614,6 +614,17 @@
   <div class="metric-defs-grid">
 
     <div class="metric-def-card">
+      <div class="metric-def-name">What we mean by "Conversion"</div>
+      <div class="metric-def-formula">Conversion = a new <em>paying</em> subscriber (Monthly Paid + Yearly Paid)</div>
+      <div class="metric-def-note">
+        <strong>Why this definition?</strong> The dataset contains two related but distinct concepts: <em>trial starts</em> (the <code>Monthly Conversions</code> and <code>Yearly Conversions</code> columns — users who began a free trial) and <em>paid conversions</em> (the <code>Monthly Paid Conversions</code> and <code>Yearly Paid Conversions</code> columns — trial users who actually paid). Throughout this report, "conversion" always refers to the second group: a new paying subscriber. A trial starter who never pays costs money to acquire but produces no revenue, so counting them would understate true acquisition cost and overstate channel efficiency. The only metric that uses trial starts is <strong>Trial-to-Paid Rate</strong>, where both numbers are needed by definition.
+      </div>
+      <div class="metric-def-example">
+        So everywhere you read "cost per conversion", "paid conversions grew X%", or "€X per conversion" — the denominator is <strong>Monthly Paid Conversions + Yearly Paid Conversions</strong>, never trial starts.
+      </div>
+    </div>
+
+    <div class="metric-def-card">
       <div class="metric-def-name">Cost per Conversion (CAC)</div>
       <div class="metric-def-formula">Marketing Spend ÷ (Monthly Paid Conversions + Yearly Paid Conversions)</div>
       <div class="metric-def-note">
