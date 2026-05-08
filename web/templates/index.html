@@ -586,7 +586,7 @@
       <div class="method-card-title"><span>3</span> Methods and tools used</div>
       <ul>
         <li>Python · pandas · numpy for all data manipulation (no Excel formulas)</li>
-        <li>IQR method for outlier detection on spend and subscriber columns</li>
+        <li>Outlier detection on Marketing Spendings and Subscribers: sort the values, take the middle 50% (between the 25th and 75th percentile), and flag any month that sits more than 1.5× that range above or below it — a standard rule for spotting unusually high or low values without assuming a bell curve</li>
         <li>matplotlib / seaborn for static charts; Chart.js for interactive dashboard charts</li>
         <li>Flask web framework; Docker for containerisation; GCP Cloud Run for hosting</li>
         <li>Automated data validation and 11 metric unit tests run at every build</li>
@@ -598,7 +598,7 @@
         <li>Single year of data — cannot distinguish seasonality from trend</li>
         <li>No customer-level data — all analysis is at channel × month aggregation</li>
         <li>62% of rows lack conversion data — channel efficiency analysis covers only the tracked subset</li>
-        <li>Reallocation model assumes constant marginal CAC — likely optimistic at scale</li>
+        <li>Budget reallocation projections assume each channel's cost-per-subscriber stays flat as spend grows — in reality the next euro spent is usually less efficient than the last (cheapest audience exhausts first, ad auctions get more competitive), so projected gains are best-case, not guaranteed</li>
         <li>No LTV or churn data — recommendations are based on acquisition cost only</li>
       </ul>
     </div>
