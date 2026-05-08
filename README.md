@@ -45,6 +45,73 @@ processed at runtime — the web server only serves pre-computed JSON and static
 > **CAC convention:** `Marketing Spend / (Monthly Paid + Yearly Paid Conversions)` —
 > post-trial CAC, the industry standard for paid-channel evaluation.
 
+## Data Validation & Testing
+
+The build pipeline has two automated safety layers that run **before** any analysis output
+is generated. If either layer fails, the Docker build stops and no report is produced.
+
+### Layer 1 — Metric unit tests (`tests/test_metrics.py`)
+
+11 tests that verify every formula used in the analysis against a small hand-crafted
+DataFrame where the expected answer can be checked by mental arithmetic.
+
+| Test | Formula verified |
+|------|-----------------|
+| `test_cac_paid_channel` | CAC = spend / (monthly paid + yearly paid conversions) |
+| `test_cac_zero_spend_returns_nan` | Non-paid channels have no CAC (not zero) |
+| `test_roas_paid_channel` | ROAS = revenue (create date) / spend |
+| `test_roas_zero_spend_is_undefined` | ROAS undefined for zero-spend channels |
+| `test_trial_to_paid` | Trial-to-paid = yearly paid / yearly conversions |
+| `test_trial_to_paid_max_one` | Paid conversions can never exceed total conversions |
+| `test_blended_roas` | Blended ROAS = total invoice revenue / total spend |
+| `test_revenue_per_subscriber` | Revenue per subscriber = revenue / subscriber count |
+| `test_total_subscribers_is_sum` | Aggregate totals match row-level sums |
+| `test_paid_conversions_sum` | `paid_conversions` = monthly paid + yearly paid |
+| `test_coupon_share_in_range` | Coupon shares are between 0 and 1 (0%–100%) |
+
+Run locally:
+```bash
+python tests/test_metrics.py
+```
+
+### Layer 2 — Raw data validation (`analysis/validate_data.py`)
+
+Checks the raw Excel file for structural and logical integrity before any analysis runs.
+
+| Check | What it catches |
+|-------|----------------|
+| Required columns present | Missing or renamed columns in a new data file |
+| All 12 months represented | Incomplete data exports |
+| At least 3 known markets | Dropped or renamed market labels |
+| No negative marketing spend | Data entry errors |
+| No negative subscriber counts | Data entry errors |
+| Coupon shares between 0–1 | Encoding errors (shares stored as counts, etc.) |
+| Yearly paid ≤ yearly conversions | Logical impossibility in conversion data |
+| No completely empty rows | Blank rows in the source file |
+
+**Hard stop** (build fails, error printed): columns missing, negative values, logical
+impossibilities, or values so far out of range they indicate serious corruption.
+
+**Warning** (build continues, row flagged for the data team): values slightly above
+expected range that appear to be isolated data entry artefacts. Example: one row in
+the current dataset has `Share Coupon Used = 1.3333` (PR / English / February) — this
+is flagged, clamped to 1.0 for analysis, and should be investigated with the data team.
+
+Run locally:
+```bash
+python analysis/validate_data.py
+```
+
+### Build order in Docker
+
+```
+1. python tests/test_metrics.py      # formulas correct?
+2. python analysis/generate_all.py   # data valid? → then generate outputs
+```
+
+If either step exits with an error, the build fails and the broken image is never
+deployed to Cloud Run.
+
 ## CI/CD Setup (GitHub Actions → Cloud Run)
 
 1. Enable GCP APIs:
