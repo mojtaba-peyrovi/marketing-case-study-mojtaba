@@ -62,7 +62,7 @@ def run(df_full, df_conv):
     by_channel1["roas"] = (by_channel1["revenue"] / by_channel1["spend"].replace(0, np.nan)).round(2)
     by_channel1["cac"] = (by_channel1["spend"] / by_channel1["subscribers"].replace(0, np.nan)).round(2)
 
-    # ── By Channel 3 (top 5 by subscribers) ─────────────────────────────────
+    # ── By Channel 3 (top 5 by subscribers + top by ROAS) ───────────────────
     channel3_df = df_full[df_full["Conversion Channel 3"].str.strip() != "UNKNOWN"]
     top_channels = (
         channel3_df.groupby("Conversion Channel 3")["Subscriber"]
@@ -72,6 +72,22 @@ def run(df_full, df_conv):
         .reset_index()
     )
     top_channels.columns = ["channel", "subscribers"]
+
+    # Top ROAS paid channel (spend > 0)
+    by_ch3_roas = (
+        channel3_df.groupby("Conversion Channel 3")
+        .agg(
+            subscribers=("Subscriber", "sum"),
+            spend=("Marketing Spendings", "sum"),
+            revenue=("New Revenue Invoice Date", "sum"),
+        )
+        .reset_index()
+    )
+    by_ch3_roas["roas"] = (
+        by_ch3_roas["revenue"] / by_ch3_roas["spend"].replace(0, np.nan)
+    ).round(2)
+    paid_ch3 = by_ch3_roas[by_ch3_roas["spend"] > 0].dropna(subset=["roas"])
+    top_roas_channel = paid_ch3.loc[paid_ch3["roas"].idxmax()] if len(paid_ch3) > 0 else None
 
     # ── Coupon usage ─────────────────────────────────────────────────────────
     coupon_df = df_conv[df_conv["Share Coupon Used"].notna()]
@@ -93,6 +109,14 @@ def run(df_full, df_conv):
         monthly_share = yearly_share = None
 
     # ── Key narrative findings ────────────────────────────────────────────────
+    top_roas_finding = ""
+    if top_roas_channel is not None:
+        top_roas_finding = (
+            f"{top_roas_channel['Conversion Channel 3']} is the highest-efficiency paid channel at "
+            f"{top_roas_channel['roas']}x ROAS (€{int(top_roas_channel['spend']):,} spend → "
+            f"€{int(top_roas_channel['revenue']):,} revenue) — a small-scale pilot that warrants significant scaling."
+        )
+
     findings = [
         f"German market dominates with the highest subscriber volume ({top_market_subs} is the top market by subscribers).",
         f"Overall ROAS is {overall_roas}x — for every €1 spent on marketing, the Company generates €{overall_roas} in new subscription revenue.",
@@ -101,6 +125,16 @@ def run(df_full, df_conv):
         f"All ROAS figures use Invoice Date revenue — confirmed payments only, not trial starters who may never pay.",
         f"Yearly subscriptions dominate the conversion mix ({round(yearly_share*100,1)}%), indicating strong long-term product-market fit.",
     ]
+    if top_roas_finding:
+        findings.insert(2, top_roas_finding)
+
+    top_roas_rec = ""
+    if top_roas_channel is not None:
+        top_roas_rec = (
+            f"Scale {top_roas_channel['Conversion Channel 3']} — at {top_roas_channel['roas']}x ROAS it is "
+            f"the most capital-efficient paid channel; increase budget from €{int(top_roas_channel['spend']):,} "
+            f"to test performance at 5–10× current spend before broader rollout."
+        )
 
     recommendations = [
         "Double down on Influencer channels — they deliver subscribers at scale with measurable ROAS.",
@@ -109,6 +143,8 @@ def run(df_full, df_conv):
         "Use Invoice Date revenue as the single standard for all ROAS reporting — it counts only confirmed payments.",
         "Invest in Organic Search (SEO) — currently zero direct spend with meaningful subscriber contribution.",
     ]
+    if top_roas_rec:
+        recommendations.insert(0, top_roas_rec)
 
     result = {
         "totals": {
@@ -132,6 +168,13 @@ def run(df_full, df_conv):
         },
         "top_market_by_subscribers": top_market_subs,
         "top_market_by_revenue": top_market_rev,
+        "top_roas_paid_channel": {
+            "channel": top_roas_channel["Conversion Channel 3"],
+            "roas": float(top_roas_channel["roas"]),
+            "spend_eur": int(top_roas_channel["spend"]),
+            "revenue_eur": int(top_roas_channel["revenue"]),
+            "subscribers": int(top_roas_channel["subscribers"]),
+        } if top_roas_channel is not None else None,
         "key_findings": findings,
         "top_recommendations": recommendations,
     }
