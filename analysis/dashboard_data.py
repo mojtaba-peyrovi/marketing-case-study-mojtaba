@@ -85,6 +85,7 @@ def run(df_full, df_conv):
 
     spend_growth_pct = int(round((monthly.iloc[-1]["spend"] / spend_jan - 1) * 100))
     conv_growth_pct = int(round((monthly.iloc[-1]["paid_conv"] / conv_jan - 1) * 100))
+    spend_vs_conv_multiplier = round(spend_growth_pct / conv_growth_pct, 1) if conv_growth_pct else None
 
     # Quarterly CAC
     df["quarter"] = pd.cut(df["Business Month"], bins=[0, 3, 6, 9, 12],
@@ -232,6 +233,7 @@ def run(df_full, df_conv):
             "spend_growth_pct": spend_growth_pct,
             "conv_growth_pct": conv_growth_pct,
             "gap_pts": spend_growth_pct - conv_growth_pct,
+            "spend_vs_conv_multiplier": spend_vs_conv_multiplier,
             "q1_cac": q1_cac,
             "q4_cac": q4_cac,
             "q1_roas": q1_roas,

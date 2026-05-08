@@ -42,6 +42,12 @@ def load_data():
         (df["Conversion Channel 3"].str.strip() == "UNKNOWN")
     )
 
+    # Clamp coupon shares to [0, 1] — one known anomaly in the dataset (PR/English/Feb)
+    # has Share Coupon Used = 1.3333, which is impossible for a ratio. Clamped here;
+    # flagged by validate_data.py as a warning for the data team.
+    for col in ["Share Coupon Used", "Share Student Coupon Used"]:
+        df[col] = df[col].clip(upper=1.0)
+
     # Total conversions (monthly + yearly, where available)
     df["total_conversions"] = df["Monthly Conversions"].fillna(0) + df["Yearly Conversions"].fillna(0)
 

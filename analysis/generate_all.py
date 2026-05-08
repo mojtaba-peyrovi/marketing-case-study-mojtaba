@@ -21,6 +21,7 @@ ANALYSIS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ANALYSIS_DIR)
 
 from data_loader import load_data
+from validate_data import validate, DataValidationError
 from _chart_style import apply_brand_style
 
 
@@ -41,10 +42,15 @@ def main():
     t0 = time.time()
     apply_brand_style()
 
-    print("\n[0] Loading and cleaning dataset...")
+    print("\n[0] Loading and validating dataset...")
     df_full, df_conv = load_data()
     print(f"    Full dataset: {len(df_full):,} rows")
     print(f"    Conversion dataset: {len(df_conv):,} rows")
+    try:
+        validate(df_full)
+    except DataValidationError as e:
+        print(str(e))
+        sys.exit(1)
 
     scripts = [
         ("01_executive_summary.py",   "[1] Executive Summary"),

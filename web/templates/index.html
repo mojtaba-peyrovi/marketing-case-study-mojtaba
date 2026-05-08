@@ -93,22 +93,35 @@
 <!-- ============== EFFICIENCY GAP ============== -->
 <section class="section">
   <div class="section-head">
-    <h2>Spend grew <em>{{ ef.spend_growth_pct }}%</em>. Conversions grew {{ ef.conv_growth_pct }}%.</h2>
-    <div class="section-sub">Marketing efficiency is deteriorating — and we can't see it on the topline.</div>
+    <h2>Spend grew <em>{{ ef.spend_growth_pct }}%</em>. Conversions grew only {{ ef.conv_growth_pct }}%.</h2>
+    <div class="section-sub">We're spending more to acquire less — and it's getting worse each quarter.</div>
   </div>
   <div class="grid-2">
     <div class="card">
-      <div class="card-eyebrow">Indexed growth (Jan = 100)</div>
-      <div class="card-title" style="margin-bottom: 16px;">The efficiency gap</div>
+      <div class="card-eyebrow">Monthly growth from January baseline</div>
+      <div class="card-title" style="margin-bottom: 16px;">Spend is accelerating. Conversions are not keeping up.</div>
       <div class="chart-container"><canvas id="efficiencyChart"></canvas></div>
     </div>
     <div class="card card-lavender">
-      <div class="card-eyebrow">The number that matters</div>
-      <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 800; font-size: 88px; line-height: 1; letter-spacing: -3px; color: var(--ink); margin: 12px 0 16px;">{{ ef.gap_pts }}<span style="font-size: 48px;">pts</span></div>
-      <div class="card-body" style="color: var(--ink2);">…by which spend growth has outpaced paid-conversion growth (Dec vs Jan, indexed).</div>
-      <div style="height: 1px; background: var(--coral); margin: 24px 0;"></div>
-      <div style="font-size: 13px; color: var(--ink); font-weight: 600; margin-bottom: 4px;">Q4 CAC: €{{ ef.q4_cac }} (+{{ ef.cac_inflation_pct }}% vs Q1)</div>
-      <div style="font-size: 13px; color: var(--ink2);">Q4 ROAS: {{ ef.q4_roas }}× (Q1: {{ ef.q1_roas }}×)</div>
+      <div class="card-eyebrow">What this means in plain numbers</div>
+      <div style="display:flex;gap:16px;margin:16px 0 20px;align-items:flex-end;">
+        <div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:64px;line-height:1;letter-spacing:-2px;color:var(--bad);">{{ ef.spend_growth_pct }}%</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:4px;font-weight:600;">spend grew</div>
+        </div>
+        <div style="font-size:36px;color:var(--ink3);padding-bottom:12px;">vs</div>
+        <div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:64px;line-height:1;letter-spacing:-2px;color:var(--good);">{{ ef.conv_growth_pct }}%</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:4px;font-weight:600;">conversions grew</div>
+        </div>
+      </div>
+      <div class="card-body" style="color:var(--ink2);margin-bottom:20px;">
+        For every 1% we increased the marketing budget, we got back less than half a percent in additional paid conversions.
+        Spend grew <strong>{{ "%.1f"|format(ef.spend_growth_pct / ef.conv_growth_pct) }}× faster</strong> than the conversions it was meant to drive.
+      </div>
+      <div style="height: 1px; background: var(--coral); margin: 0 0 16px;"></div>
+      <div style="font-size: 13px; color: var(--ink); font-weight: 600; margin-bottom: 4px;">Q4 cost per conversion: €{{ ef.q4_cac }} (+{{ ef.cac_inflation_pct }}% vs Q1)</div>
+      <div style="font-size: 13px; color: var(--ink2);">Q4 revenue per €1 spent: {{ ef.q4_roas }}× (Q1 was {{ ef.q1_roas }}×)</div>
       <div style="font-style: italic; font-family: 'Fraunces', Georgia, serif; font-size: 18px; color: var(--coral); margin-top: 20px; line-height: 1.3;">Volume is up.<br>Quality of growth is down.</div>
     </div>
   </div>
@@ -202,7 +215,7 @@
       <div style="display: flex; flex-direction: column; gap: 18px; margin-top: 16px;">
         <div>
           <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 4px;">→ Influencer IG sends the best users.</div>
-          <div style="font-size: 12.5px; color: var(--ink2); line-height: 1.5;">29% trial-to-paid is 13pts above TikTok and 7pts above the English market average.</div>
+          <div style="font-size: 12.5px; color: var(--ink2); line-height: 1.5;">29% of Influencer IG trials convert to paid — compared to 21% for TikTok and 18% for the English market. That's 8–11% more paying customers for the same number of trial starts.</div>
         </div>
         <div>
           <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 4px;">→ Paid social underperforms organic.</div>
