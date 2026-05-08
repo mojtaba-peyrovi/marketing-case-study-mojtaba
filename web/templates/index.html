@@ -436,12 +436,30 @@
       <div class="market-name">{{ 'Germany' if mk.name == 'German' else ('France' if mk.name == 'French' else 'English Markets') }}</div>
       <div class="market-verdict">{{ verdicts[mk.code] }}</div>
       <div class="market-metrics">
-        <div class="market-metric"><div class="metric-val">{% if mk.spend >= 1e6 %}€{{ "%.2f"|format(mk.spend/1e6) }}M{% else %}€{{ "%.0f"|format(mk.spend/1000) }}k{% endif %}</div><div class="metric-label">Spend</div></div>
-        <div class="market-metric"><div class="metric-val">€{{ "%.2f"|format(mk.cac) }}</div><div class="metric-label">Cost / Conv.</div></div>
-        <div class="market-metric"><div class="metric-val">{{ "%.2f"|format(mk.roas) }}×</div><div class="metric-label">Return on Spend</div></div>
-        <div class="market-metric"><div class="metric-val">{% if mk.subs >= 1000 %}{{ "%.0f"|format(mk.subs/1000) }}k{% else %}{{ mk.subs }}{% endif %}</div><div class="metric-label">Subscribers</div></div>
-        <div class="market-metric"><div class="metric-val">{{ mk.t2p_pct }}%</div><div class="metric-label">Trial → Paid</div></div>
-        <div class="market-metric"><div class="metric-val">€{{ "%.2f"|format(mk.arpu) }}</div><div class="metric-label">Revenue / Conv.</div></div>
+        <div class="market-metric">
+          <div class="metric-val">{% if mk.spend >= 1e6 %}€{{ "%.2f"|format(mk.spend/1e6) }}M{% else %}€{{ "%.0f"|format(mk.spend/1000) }}k{% endif %}</div>
+          <div class="metric-label">Spend</div>
+        </div>
+        <div class="market-metric">
+          <div class="metric-val {{ 'good' if mk.cac < 38 else ('bad' if mk.cac > 45 else '') }}">€{{ "%.2f"|format(mk.cac) }}</div>
+          <div class="metric-label">Cost / Conv.</div>
+        </div>
+        <div class="market-metric">
+          <div class="metric-val {{ 'good' if mk.roas >= 1.0 else 'bad' }}">{{ "%.2f"|format(mk.roas) }}×</div>
+          <div class="metric-label">Return on Spend</div>
+        </div>
+        <div class="market-metric">
+          <div class="metric-val">{% if mk.subs >= 1000 %}{{ "%.0f"|format(mk.subs/1000) }}k{% else %}{{ mk.subs }}{% endif %}</div>
+          <div class="metric-label">Subscribers</div>
+        </div>
+        <div class="market-metric">
+          <div class="metric-val {{ 'good' if mk.t2p_pct >= 25 else ('bad' if mk.t2p_pct < 20 else '') }}">{{ mk.t2p_pct }}%</div>
+          <div class="metric-label">Trial → Paid</div>
+        </div>
+        <div class="market-metric">
+          <div class="metric-val {{ 'good' if mk.arpu >= 12 else ('bad' if mk.arpu < 10 else '') }}">€{{ "%.2f"|format(mk.arpu) }}</div>
+          <div class="metric-label">Revenue / Conv.</div>
+        </div>
       </div>
       <div class="market-story">{{ stories[mk.code] }}</div>
     </div>
