@@ -13,7 +13,8 @@ jobs:
     env:
       REGION: europe-west1
       SERVICE: marketing-case-study-mojtaba
-      IMAGE: gcr.io/${{ secrets.GCP_PROJECT_ID }}/marketing-case-study-mojtaba
+      # Artifact Registry (modern replacement for deprecated gcr.io)
+      IMAGE: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/marketing-case-study-mojtaba/marketing-case-study-mojtaba
 
     steps:
       - name: Checkout code
@@ -27,8 +28,8 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Configure Docker for GCR
-        run: gcloud auth configure-docker --quiet
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
 
       - name: Build Docker image
         run: docker build -t ${{ env.IMAGE }}:${{ github.sha }} -t ${{ env.IMAGE }}:latest .
@@ -58,4 +59,5 @@ jobs:
             --region ${{ env.REGION }} \
             --format 'value(status.url)')
           echo "Deployed to: $URL"
-          echo "SERVICE_URL=$URL" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployment successful" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** $URL" >> $GITHUB_STEP_SUMMARY
