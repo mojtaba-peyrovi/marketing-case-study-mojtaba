@@ -876,11 +876,12 @@ td.delta-neg { color: var(--bad); font-weight: 600; }
 }
 
 .method-card li::before {
-  content: '·';
+  content: '•';
   position: absolute;
   left: 0;
   color: var(--coral);
   font-weight: 700;
+  font-size: 14px;
 }
 
 /* ===== Metric definitions ===== */
