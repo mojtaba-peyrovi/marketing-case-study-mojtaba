@@ -1,14 +1,15 @@
 """
-Flask application — serves the Marketing Campaign Analysis UI.
+Flask application — serves the Marketing Performance Diagnostic.
 
 All analysis is pre-computed at Docker build time (analysis/generate_all.py).
-At runtime this app only serves static JSON + chart assets — no raw data is exposed.
+At runtime this app only serves pre-computed JSON + chart images.
+No raw data is exposed via any web route.
 """
 
 import json
 import os
 
-from flask import Flask, abort, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory
 
 app = Flask(__name__)
 
@@ -27,14 +28,13 @@ def _load(filename):
 
 @app.route("/")
 def index():
-    context = {
-        "q1": _load("executive_summary.json"),
-        "q2": _load("recommendations.json"),
-        "q3": _load("budget_allocation.json"),
-        "q4": _load("patterns_anomalies.json"),
-        "q5": _load("data_gaps.json"),
-    }
-    return render_template("index.html", **context)
+    dashboard = _load("dashboard.json")
+    # Embed the full dashboard JSON for client-side Chart.js
+    return render_template(
+        "index.html",
+        d=dashboard,
+        dashboard_json=json.dumps(dashboard),
+    )
 
 
 @app.route("/charts/<path:filename>")
@@ -49,6 +49,12 @@ def download_chart(filename):
         as_attachment=True,
         download_name=filename
     )
+
+
+@app.route("/api/dashboard.json")
+def api_dashboard():
+    """Expose the pre-computed dashboard JSON for download / inspection."""
+    return send_from_directory(DATA_DIR, "dashboard.json")
 
 
 if __name__ == "__main__":

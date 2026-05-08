@@ -52,6 +52,7 @@ def main():
         ("03_budget_allocation.py",   "[3] Budget Allocation Hypotheses"),
         ("04_patterns_anomalies.py",  "[4] Key Patterns & Anomalies"),
         ("05_data_gaps.py",           "[5] Data Gaps & Additional Inputs"),
+        ("dashboard_data.py",         "[+] Dashboard data (KPIs, channels, markets)"),
     ]
 
     for filename, label in scripts:
