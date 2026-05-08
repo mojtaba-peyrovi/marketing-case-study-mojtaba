@@ -29,10 +29,11 @@ def _load(filename):
 @app.route("/")
 def index():
     dashboard = _load("dashboard.json")
-    # Embed the full dashboard JSON for client-side Chart.js
+    data_gaps = _load("data_gaps.json")
     return render_template(
         "index.html",
         d=dashboard,
+        gaps=data_gaps,
         dashboard_json=json.dumps(dashboard),
     )
 

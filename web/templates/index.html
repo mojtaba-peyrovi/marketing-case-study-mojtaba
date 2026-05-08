@@ -23,78 +23,147 @@
   <div class="period-badge">Jan – Dec 2024</div>
 </header>
 
-<!-- ============== HERO ============== -->
 {% set k = d.kpis %}{% set ef = d.efficiency %}{% set m = d.meta %}
+
+<!-- ============== HERO ============== -->
 <section class="hero">
-  <div class="eyebrow">Executive Summary</div>
+  <div class="eyebrow">Senior Data Analyst Case Study · 2024</div>
   <h1>We spent <em>€{{ "%.2f"|format(k.total_spend/1e6) }}M</em> in 2024.<br>Here's where the next million should go.</h1>
   <p class="hero-sub">
-    Topline growth looks healthy — but <strong>spend grew {{ ef.spend_growth_pct }}% while paid conversions grew only {{ ef.conv_growth_pct }}%</strong>.
-    The numbers point to one clear move: stop scaling Meta into diminishing returns
-    and reallocate ~€1.3M to the channels that are starving.
+    Five questions from the brief — answered with data. Spend grew <strong>{{ ef.spend_growth_pct }}%</strong> while paid conversions grew only <strong>{{ ef.conv_growth_pct }}%</strong>. The analysis below explains why, and what to do about it.
   </p>
 </section>
 
-<!-- ============== KPI STRIP ============== -->
-<section class="kpi-strip">
-  <div class="kpi-card">
-    <div class="kpi-label">Marketing Spend</div>
-    <div class="kpi-value">€{{ "%.2f"|format(k.total_spend/1e6) }}M</div>
-    <div class="kpi-trend warn">+{{ ef.spend_growth_pct }}% Jan–Dec run-rate</div>
+<!-- ============== QUESTION NAVIGATOR ============== -->
+<div class="q-nav">
+  <div class="q-nav-inner">
+    <div class="q-nav-title">Five questions answered in this report</div>
+    <ul class="q-nav-list">
+      <li class="q-nav-item">
+        <div class="q-nav-num">1</div>
+        <div class="q-nav-text">
+          <strong>Executive Summary</strong>
+          Concise, high-impact summary of key findings and recommendations for the CEO.
+        </div>
+        <a class="q-nav-link" href="#q1">Jump to answer ↓</a>
+      </li>
+      <li class="q-nav-item">
+        <div class="q-nav-num">2</div>
+        <div class="q-nav-text">
+          <strong>Recommendations & Visualizations</strong>
+          Specific, actionable steps — and how the insights are presented visually.
+        </div>
+        <a class="q-nav-link" href="#q2">Jump to answer ↓</a>
+      </li>
+      <li class="q-nav-item">
+        <div class="q-nav-num">3</div>
+        <div class="q-nav-text">
+          <strong>Budget Allocation Hypotheses</strong>
+          Where to increase or decrease spend, and what evidence supports each hypothesis.
+        </div>
+        <a class="q-nav-link" href="#q3">Jump to answer ↓</a>
+      </li>
+      <li class="q-nav-item">
+        <div class="q-nav-num">4</div>
+        <div class="q-nav-text">
+          <strong>Key Patterns & Anomalies</strong>
+          Trends and outliers that stand out — and what they imply for the business.
+        </div>
+        <a class="q-nav-link" href="#q4">Jump to answer ↓</a>
+      </li>
+      <li class="q-nav-item">
+        <div class="q-nav-num">5</div>
+        <div class="q-nav-text">
+          <strong>Data Gaps & Additional Inputs</strong>
+          What additional data would materially improve this analysis.
+        </div>
+        <a class="q-nav-link" href="#q5">Jump to answer ↓</a>
+      </li>
+    </ul>
   </div>
-  <div class="kpi-card">
-    <div class="kpi-label">New Subscribers</div>
-    <div class="kpi-value">{{ "%.0f"|format(k.total_subs/1000) }}k</div>
-    <div class="kpi-trend up">{{ k.dachfr_share_pct }}% from DACH + FR</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">New Revenue</div>
-    <div class="kpi-value">€{{ "%.2f"|format(k.total_rev_invoice/1e6) }}M</div>
-    <div class="kpi-trend up">Invoice-date basis</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">Blended ROAS</div>
-    <div class="kpi-value">{{ k.blended_roas }}×</div>
-    <div class="kpi-trend down">CAC trending up; mix-driven</div>
-  </div>
-</section>
+</div>
 
-<!-- ============== FINDINGS ============== -->
-<section class="section">
+<!-- ============================================================ -->
+<!-- Q1: EXECUTIVE SUMMARY                                        -->
+<!-- ============================================================ -->
+<section class="section" id="q1">
+  <div class="q-banner">
+    <div class="q-banner-num">Q1</div>
+    <div class="q-banner-content">
+      <div class="q-banner-label">Question from the brief</div>
+      <div class="q-banner-question">"Provide a concise, high-impact summary of your key findings and recommendations."</div>
+    </div>
+  </div>
+
   <div class="section-head">
     <h2>The three things that <em>matter</em></h2>
     <div class="section-sub">If the CEO reads only one thing, it's this.</div>
   </div>
+
   <div class="findings">
     <div class="finding">
       <div class="finding-num f1">1</div>
       <div>
         <div class="finding-head">We are paying for growth we already had.</div>
-        <div class="finding-body">Meta absorbs <strong>{{ m.share_of_paid_pct }}% of paid budget</strong> at €{{ m.full_year_cac }} CAC and {{ m.full_year_roas }}× ROAS — and CAC has worsened from €{{ "%.0f"|format(m.jan_cac) }} in Jan to €{{ "%.0f"|format(m.dec_cac) }} in Dec (<strong>+{{ m.cac_inflation_pct }}%</strong>). We are scaling a channel whose efficiency is collapsing.</div>
+        <div class="finding-body">Meta absorbs <strong>{{ m.share_of_paid_pct }}% of paid budget</strong> at €{{ m.full_year_cac }} cost per conversion and {{ m.full_year_roas }}× return on spend — and the cost has worsened from €{{ "%.0f"|format(m.jan_cac) }} in January to €{{ "%.0f"|format(m.dec_cac) }} in December (<strong>+{{ m.cac_inflation_pct }}%</strong>). We are scaling a channel whose efficiency is collapsing.</div>
       </div>
     </div>
     <div class="finding">
       <div class="finding-num f2">2</div>
       <div>
         <div class="finding-head">Our two best paid channels are starved of budget.</div>
-        <div class="finding-body">Google Ads delivers <strong>3.80× ROAS at €9.71 CAC</strong> but receives only 1.3% of paid spend. Influencer Instagram delivers 0.95× ROAS at €37.35 CAC and converts trials at <strong>29%</strong> — the highest of any paid channel — yet gets just 28.6%.</div>
+        <div class="finding-body">Google Ads delivers <strong>3.80× return on spend at €9.71 per conversion</strong> but receives only 1.3% of paid budget. Influencer Instagram converts trials at <strong>29%</strong> — the highest of any paid channel — at €37.35 per conversion, yet gets just 28.6% of budget.</div>
       </div>
     </div>
     <div class="finding">
       <div class="finding-num f3">3</div>
       <div>
         <div class="finding-head">The English market is leaking. The German market is humming.</div>
-        <div class="finding-body">Germany returns <strong>{{ d.markets[0].roas }}×</strong> on every €1 spent and trial-converts at {{ d.markets[0].t2p_pct }}%. English spends €{{ "%.0fk"|format(d.markets[2].spend/1000) }} for {{ d.markets[2].roas }}× ROAS and trial-converts at just <strong>{{ d.markets[2].t2p_pct }}%</strong> — a structural drop-off pointing to a product/funnel issue, not media mix.</div>
+        <div class="finding-body">Germany returns <strong>{{ d.markets[0].roas }}×</strong> on every €1 spent and converts {{ d.markets[0].t2p_pct }}% of trial users to paying subscribers. English spends €{{ "%.0fk"|format(d.markets[2].spend/1000) }} for {{ d.markets[2].roas }}× return and converts just <strong>{{ d.markets[2].t2p_pct }}%</strong> of trials — a structural drop-off pointing to a product or funnel issue, not a media problem.</div>
       </div>
+    </div>
+  </div>
+
+  <!-- KPI strip -->
+  <div class="kpi-strip" style="padding:0;margin-top:32px;">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Marketing Spend</div>
+      <div class="kpi-value">€{{ "%.2f"|format(k.total_spend/1e6) }}M</div>
+      <div class="kpi-trend warn">+{{ ef.spend_growth_pct }}% Jan–Dec run-rate</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">New Subscribers</div>
+      <div class="kpi-value">{{ "%.0f"|format(k.total_subs/1000) }}k</div>
+      <div class="kpi-trend up">{{ k.dachfr_share_pct }}% from DACH + FR</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">New Revenue (Invoice Date)</div>
+      <div class="kpi-value">€{{ "%.2f"|format(k.total_rev_invoice/1e6) }}M</div>
+      <div class="kpi-trend up">Actual payments received</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Blended Return on Spend</div>
+      <div class="kpi-value">{{ k.blended_roas }}×</div>
+      <div class="kpi-trend down">Acquisition cost rising each quarter</div>
     </div>
   </div>
 </section>
 
-<!-- ============== EFFICIENCY GAP ============== -->
-<section class="section">
+<!-- ============================================================ -->
+<!-- Q2: RECOMMENDATIONS & VISUALIZATIONS                         -->
+<!-- ============================================================ -->
+<section class="section" id="q2">
+  <div class="q-banner">
+    <div class="q-banner-num">Q2</div>
+    <div class="q-banner-content">
+      <div class="q-banner-label">Question from the brief</div>
+      <div class="q-banner-question">"What specific, actionable steps would you recommend based on your analysis? How would you present these insights visually to ensure clarity and decision-making impact?"</div>
+    </div>
+  </div>
+
   <div class="section-head">
     <h2>Spend grew <em>{{ ef.spend_growth_pct }}%</em>. Conversions grew only {{ ef.conv_growth_pct }}%.</h2>
-    <div class="section-sub">We're spending more to acquire less — and it's getting worse each quarter.</div>
+    <div class="section-sub">This chart is the core visual argument for reallocation.</div>
   </div>
   <div class="grid-2">
     <div class="card">
@@ -116,57 +185,104 @@
         </div>
       </div>
       <div class="card-body" style="color:var(--ink2);margin-bottom:20px;">
-        For every 1% we increased the marketing budget, we got back less than half a percent in additional paid conversions.
-        Spend grew <strong>{{ "%.1f"|format(ef.spend_growth_pct / ef.conv_growth_pct) }}× faster</strong> than the conversions it was meant to drive.
+        For every 1% we increased the marketing budget, we got back less than half a percent in additional paid conversions. Spend grew <strong>{{ "%.1f"|format(ef.spend_growth_pct / ef.conv_growth_pct) }}× faster</strong> than the conversions it was meant to drive.
       </div>
-      <div style="height: 1px; background: var(--coral); margin: 0 0 16px;"></div>
-      <div style="font-size: 13px; color: var(--ink); font-weight: 600; margin-bottom: 4px;">Q4 cost per conversion: €{{ ef.q4_cac }} (+{{ ef.cac_inflation_pct }}% vs Q1)</div>
-      <div style="font-size: 13px; color: var(--ink2);">Q4 revenue per €1 spent: {{ ef.q4_roas }}× (Q1 was {{ ef.q1_roas }}×)</div>
-      <div style="font-style: italic; font-family: 'Fraunces', Georgia, serif; font-size: 18px; color: var(--coral); margin-top: 20px; line-height: 1.3;">Volume is up.<br>Quality of growth is down.</div>
+      <div style="height:1px;background:var(--coral);margin:0 0 16px;"></div>
+      <div style="font-size:13px;color:var(--ink);font-weight:600;margin-bottom:4px;">Q4 cost per conversion: €{{ ef.q4_cac }} (+{{ ef.cac_inflation_pct }}% vs Q1)</div>
+      <div style="font-size:13px;color:var(--ink2);">Q4 revenue per €1 spent: {{ ef.q4_roas }}× (Q1 was {{ ef.q1_roas }}×)</div>
+    </div>
+  </div>
+
+  <!-- 90-day action plan -->
+  <div style="margin-top:36px;">
+    <div class="section-head" style="margin-bottom:20px;">
+      <h2>90-day <em>action</em> plan</h2>
+      <div class="section-sub">Three specific moves, each with an owner and a success metric.</div>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-eyebrow" style="color: var(--bad);">Weeks 1–2 · Stop</div>
+        <div class="card-title" style="margin-bottom: 16px;">Stop the bleeding</div>
+        <div class="card-body" style="margin-bottom: 16px;">
+          <div style="margin-bottom: 8px;">• Cap Meta spend at Sept levels (~€350k/mo)</div>
+          <div style="margin-bottom: 8px;">• Kill Influencer YouTube + Partnership Ads (€10k for 1 conversion)</div>
+          <div>• Confirm TikTok pause is permanent</div>
+        </div>
+        <div style="border-top:1px solid var(--divider);padding-top:14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--coral);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Success metric</div>
+          <div style="font-size:12px;font-style:italic;color:var(--ink2);">Meta cost per conversion stabilises below €70</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-eyebrow" style="color: var(--warn);">Weeks 3–6 · Shift</div>
+        <div class="card-title" style="margin-bottom: 16px;">Reallocate to winners</div>
+        <div class="card-body" style="margin-bottom: 16px;">
+          <div style="margin-bottom: 8px;">• Increase Influencer Instagram budget +40% in DE/FR</div>
+          <div style="margin-bottom: 8px;">• Scale Google Ads from 1.3% → 10% of paid budget</div>
+          <div>• Pilot Influencer Podcast at €20k — scale if return &gt; 5×</div>
+        </div>
+        <div style="border-top:1px solid var(--divider);padding-top:14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--coral);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Success metric</div>
+          <div style="font-size:12px;font-style:italic;color:var(--ink2);">Blended cost per conversion below €35</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-eyebrow" style="color: var(--good);">Weeks 7–12 · Fix</div>
+        <div class="card-title" style="margin-bottom: 16px;">Fix the English funnel</div>
+        <div class="card-body" style="margin-bottom: 16px;">
+          <div style="margin-bottom: 8px;">• Funnel audit: trial → payment → activation in EN market</div>
+          <div style="margin-bottom: 8px;">• A/B test simplified checkout and native payment methods</div>
+          <div>• Incrementality test for Meta and Influencer Instagram</div>
+        </div>
+        <div style="border-top:1px solid var(--divider);padding-top:14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--coral);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Success metric</div>
+          <div style="font-size:12px;font-style:italic;color:var(--ink2);">English trial-to-paid rate above 22%</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============== META DEEP DIVE ============== -->
-<section class="section">
-  <div class="section-head">
-    <h2>The <em>Meta</em> problem</h2>
-    <div class="section-sub">CAC has risen every quarter while spend has accelerated.</div>
+<!-- ============================================================ -->
+<!-- Q3: BUDGET ALLOCATION HYPOTHESES                             -->
+<!-- ============================================================ -->
+<section class="section" id="q3">
+  <div class="q-banner">
+    <div class="q-banner-num">Q3</div>
+    <div class="q-banner-content">
+      <div class="q-banner-label">Question from the brief</div>
+      <div class="q-banner-question">"What hypotheses can you form about where to increase or decrease marketing spend? What evidence from the data supports your reasoning?"</div>
+    </div>
   </div>
-  <div class="grid-2">
+
+  <div class="section-head">
+    <h2>The <em>Meta</em> problem — evidence first</h2>
+    <div class="section-sub">Spend grew 132%. Cost per conversion rose 50%. This is the evidence behind Hypothesis 1.</div>
+  </div>
+  <div class="grid-2" style="margin-bottom:40px;">
     <div class="card">
       <div class="chart-container"><canvas id="metaChart"></canvas></div>
     </div>
     <div class="card">
       <div class="card-eyebrow">What the data shows</div>
       <div style="margin-top: 20px;">
-        <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--ink); letter-spacing: -1px;">+{{ m.spend_growth_pct }}%</div>
-        <div style="font-size: 12px; color: var(--ink3); margin-bottom: 20px; margin-top: 4px;">Meta spend growth (Jan–Dec)</div>
-
-        <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--bad); letter-spacing: -1px;">+{{ m.cac_inflation_pct }}%</div>
-        <div style="font-size: 12px; color: var(--ink3); margin-bottom: 20px; margin-top: 4px;">Meta CAC inflation</div>
-
-        <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--bad); letter-spacing: -1px;">{{ m.full_year_roas }}×</div>
-        <div style="font-size: 12px; color: var(--ink3); margin-bottom: 20px; margin-top: 4px;">Meta full-year ROAS</div>
-
-        <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 800; font-size: 40px; line-height: 1; color: var(--ink); letter-spacing: -1px;">{{ m.share_of_paid_pct }}%</div>
-        <div style="font-size: 12px; color: var(--ink3); margin-top: 4px;">of paid budget concentrated here</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:40px;line-height:1;color:var(--ink);letter-spacing:-1px;">+{{ m.spend_growth_pct }}%</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:20px;margin-top:4px;">Meta spend growth (Jan–Dec)</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:40px;line-height:1;color:var(--bad);letter-spacing:-1px;">+{{ m.cac_inflation_pct }}%</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:20px;margin-top:4px;">Meta cost-per-conversion inflation over same period</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:40px;line-height:1;color:var(--bad);letter-spacing:-1px;">{{ m.full_year_roas }}×</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:20px;margin-top:4px;">Meta full-year return on spend (below break-even of 1.0×)</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:40px;line-height:1;color:var(--ink);letter-spacing:-1px;">{{ m.share_of_paid_pct }}%</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:4px;">of total paid budget concentrated in one channel</div>
       </div>
     </div>
   </div>
-  <div class="card card-coral" style="margin-top: 16px; padding: 18px 28px;">
-    <strong style="font-size: 11px; letter-spacing: 2px;">HYPOTHESIS:</strong>
-    <span style="font-style: italic; margin-left: 12px;">Audience saturation in DACH + iOS-driven attribution decay + creative fatigue on a single-channel concentration. We're paying more for the same person twice.</span>
-  </div>
-</section>
 
-<!-- ============== CHANNEL P&L ============== -->
-<section class="section">
-  <div class="section-head">
-    <h2>The <em>channel</em> P&amp;L</h2>
-    <div class="section-sub">CAC and ROAS for every paid channel — verdict in the corner.</div>
+  <div class="section-head" style="margin-bottom:20px;">
+    <h2>Channel P&amp;L — <em>every paid channel</em> with a verdict</h2>
+    <div class="section-sub">Cost per conversion and return on spend — verdict in the corner.</div>
   </div>
-  <div class="channel-grid">
+  <div class="channel-grid" style="margin-bottom:40px;">
     {% for c in d.channels %}
     {% set cac_class = 'good' if c.cac and c.cac < 30 else ('bad' if c.cac and c.cac > 1000 else '') %}
     {% set roas_class = 'good' if c.roas and c.roas >= 3.0 else ('bad' if c.roas and c.roas < 0.7 else '') %}
@@ -182,15 +298,15 @@
         </div>
         <div class="metric">
           <div class="metric-val {{ cac_class }}">{% if c.cac %}€{{ "%.2f"|format(c.cac) if c.cac < 1000 else "{:,}".format(c.cac|int) }}{% else %}—{% endif %}</div>
-          <div class="metric-label">CAC</div>
+          <div class="metric-label">Cost / Conversion</div>
         </div>
         <div class="metric">
           <div class="metric-val {{ roas_class }}">{{ "%.2f"|format(c.roas) }}×</div>
-          <div class="metric-label">ROAS</div>
+          <div class="metric-label">Return on Spend</div>
         </div>
         <div class="metric">
           <div class="metric-val">{% if c.t2p_pct %}{{ c.t2p_pct }}%{% else %}—{% endif %}</div>
-          <div class="metric-label">Trial→Paid</div>
+          <div class="metric-label">Trial → Paid</div>
         </div>
       </div>
       <div class="ch-bar"><div class="ch-bar-fill" style="width: {{ [c.spend_share_pct, 1]|max }}%"></div></div>
@@ -198,93 +314,18 @@
     </div>
     {% endfor %}
   </div>
-</section>
 
-<!-- ============== TRIAL TO PAID ============== -->
-<section class="section">
-  <div class="section-head">
-    <h2>Trial-to-paid: <em>where intent</em> goes to die (or thrive)</h2>
-    <div class="section-sub">Yearly trial conversion by channel — a quality signal CAC misses.</div>
-  </div>
-  <div class="grid-2">
-    <div class="card">
-      <div class="chart-container tall"><canvas id="t2pChart"></canvas></div>
-    </div>
-    <div class="card card-lavender">
-      <div class="card-eyebrow">What this reveals</div>
-      <div style="display: flex; flex-direction: column; gap: 18px; margin-top: 16px;">
-        <div>
-          <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 4px;">→ Influencer IG sends the best users.</div>
-          <div style="font-size: 12.5px; color: var(--ink2); line-height: 1.5;">29% of Influencer IG trials convert to paid — compared to 21% for TikTok and 18% for the English market. That's 8–11% more paying customers for the same number of trial starts.</div>
-        </div>
-        <div>
-          <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 4px;">→ Paid social underperforms organic.</div>
-          <div style="font-size: 12.5px; color: var(--ink2); line-height: 1.5;">Direct, Word of Mouth, and PR all beat Meta, TikTok, and Google on trial-to-paid.</div>
-        </div>
-        <div>
-          <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 4px;">→ TikTok was the wrong audience.</div>
-          <div style="font-size: 12.5px; color: var(--ink2); line-height: 1.5;">20.6% — 8pts below Influencer IG. Combined with €70 CAC, the channel was paused after Sep. Confirmed correct call.</div>
-        </div>
-        <div>
-          <div style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 4px;">→ The English-market funnel is broken.</div>
-          <div style="font-size: 12.5px; color: var(--ink2); line-height: 1.5;">{{ d.markets[2].t2p_pct }}% — the lowest. Likely root causes: payment method coverage, content depth, paywall friction.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============== MARKETS ============== -->
-<section class="section">
-  <div class="section-head">
-    <h2>Three markets, <em>three different</em> stories</h2>
-    <div class="section-sub">The same playbook is producing very different results — that's a signal.</div>
-  </div>
-  <div class="grid-3">
-    {% set flags = {'de': '🇩🇪', 'fr': '🇫🇷', 'en': '🇬🇧'} %}
-    {% set verdicts = {'de': 'Flagship', 'fr': 'Optimize', 'en': 'Fix Funnel'} %}
-    {% set stories = {
-      'de': 'The engine. Best-in-class CAC, only market where ROAS exceeds 1.0×. Google Ads in DE delivers exceptional ROAS — extremely high signal.',
-      'fr': 'Healthy intent (highest trial-to-paid + highest ARPU) but expensive to reach: ~44% higher CAC than DE. Coupon usage highest here — pricing/promo strategy needs review.',
-      'en': 'Trial-to-paid is ~10pts below the other markets. This is not a media problem — it is a product/onboarding/payment problem. Don\'t scale spend until this is fixed.'
-    } %}
-    {% for mk in d.markets %}
-    <div class="market-card {{ mk.code }}">
-      <div class="market-flag">{{ flags[mk.code] }}</div>
-      <div class="market-name">{{ mk.name if mk.name != 'German' else 'Germany' }}{{ '' if mk.name != 'French' else '' }}</div>
-      <div class="market-verdict">{{ verdicts[mk.code] }}</div>
-      <div class="market-metrics">
-        <div class="market-metric"><div class="metric-val">{% if mk.spend >= 1e6 %}€{{ "%.2f"|format(mk.spend/1e6) }}M{% else %}€{{ "%.0f"|format(mk.spend/1000) }}k{% endif %}</div><div class="metric-label">Spend</div></div>
-        <div class="market-metric"><div class="metric-val">€{{ "%.2f"|format(mk.cac) }}</div><div class="metric-label">CAC</div></div>
-        <div class="market-metric"><div class="metric-val">{{ "%.2f"|format(mk.roas) }}×</div><div class="metric-label">ROAS</div></div>
-        <div class="market-metric"><div class="metric-val">{% if mk.subs >= 1000 %}{{ "%.0f"|format(mk.subs/1000) }}k{% else %}{{ mk.subs }}{% endif %}</div><div class="metric-label">Subscribers</div></div>
-        <div class="market-metric"><div class="metric-val">{{ mk.t2p_pct }}%</div><div class="metric-label">Trial→Paid</div></div>
-        <div class="market-metric"><div class="metric-val">€{{ "%.2f"|format(mk.arpu) }}</div><div class="metric-label">ARPU</div></div>
-      </div>
-      <div class="market-story">{{ stories[mk.code] }}</div>
-    </div>
-    {% endfor %}
-  </div>
-</section>
-
-<!-- ============== REALLOCATION ============== -->
-<section class="section">
-  <div class="section-head">
+  <!-- Reallocation -->
+  <div class="section-head" style="margin-bottom:20px;">
     <h2>Budget <em>reallocation</em> hypothesis</h2>
-    <div class="section-sub">Same €{{ "%.2f"|format(k.total_spend/1e6) }}M, different distribution — modelled at observed channel CAC.</div>
+    <div class="section-sub">Same €{{ "%.2f"|format(k.total_spend/1e6) }}M, redistributed at observed channel efficiencies.</div>
   </div>
   <div class="realloc-grid">
     <div class="realloc-table">
-      <h3>Proposed allocation</h3>
+      <h3>Proposed allocation — same total spend</h3>
       <table>
         <thead>
-          <tr>
-            <th>Channel</th>
-            <th class="right">Current</th>
-            <th class="right">Proposed</th>
-            <th class="right">Δ Spend</th>
-            <th class="right">Δ Conversions</th>
-          </tr>
+          <tr><th>Channel</th><th class="right">Current</th><th class="right">Proposed</th><th class="right">Δ Spend</th><th class="right">Δ Conversions</th></tr>
         </thead>
         <tbody>
           <tr><td class="channel">Meta (Facebook/Instagram)</td><td class="right">€3.71M</td><td class="right">€2.40M</td><td class="right delta-neg">−€1.31M</td><td class="right delta-neg">−19,000</td></tr>
@@ -292,75 +333,186 @@
           <tr><td class="channel">Google Ads</td><td class="right">€75k</td><td class="right">€600k</td><td class="right delta-pos">+€525k</td><td class="right delta-pos">+54,070</td></tr>
           <tr><td class="channel">Influencer Podcast</td><td class="right">€3k</td><td class="right">€250k</td><td class="right delta-pos">+€247k</td><td class="right delta-pos">+25k–49k</td></tr>
           <tr><td class="channel">TikTok Ads</td><td class="right">€447k</td><td class="right">€0</td><td class="right delta-neg">−€447k</td><td class="right delta-neg">−6,400</td></tr>
-          <tr><td class="channel" style="color: var(--ink3);">Test budget (new)</td><td class="right">—</td><td class="right">€298k</td><td class="right delta-pos">+€298k</td><td class="right delta-pos">+7,500</td></tr>
+          <tr><td class="channel" style="color:var(--ink3);">Test budget (new)</td><td class="right">—</td><td class="right">€298k</td><td class="right delta-pos">+€298k</td><td class="right delta-pos">+7,500</td></tr>
         </tbody>
       </table>
     </div>
     <div class="realloc-summary">
       <div>
-        <div class="card-eyebrow">Net uplift (conservative)</div>
+        <div class="card-eyebrow">Net uplift (conservative estimate)</div>
         <div class="realloc-big">+30k<br>to 55k</div>
-        <div class="realloc-tag">paid conversions on the same total spend</div>
+        <div class="realloc-tag">more paid conversions on the same total spend</div>
         <div class="realloc-divider"></div>
-        <div class="realloc-row"><span>Implied rev. lift</span><strong>+€1.2M – €2.2M</strong></div>
-        <div class="realloc-row"><span>Blended CAC</span><strong>€38 → ~€28</strong></div>
-        <div class="realloc-row"><span>Implementation</span><strong>90 days</strong></div>
+        <div class="realloc-row"><span>Implied revenue lift</span><strong>+€1.2M – €2.2M</strong></div>
+        <div class="realloc-row"><span>Blended cost per conversion</span><strong>€38 → ~€28</strong></div>
+        <div class="realloc-row"><span>Implementation timeline</span><strong>90 days</strong></div>
       </div>
-      <div style="font-size: 11px; color: var(--purple); font-style: italic; margin-top: 24px; line-height: 1.5;">
-        Model assumes constant marginal CAC. Influencer IG capacity capped at +60% to mitigate diminishing returns.
-      </div>
+      <div style="font-size:11px;color:var(--purple);font-style:italic;margin-top:24px;line-height:1.5;">Model assumes constant marginal cost per conversion. Influencer IG capacity capped at +60% to avoid diminishing returns.</div>
     </div>
   </div>
 </section>
 
-<!-- ============== 90-DAY PLAN ============== -->
-<section class="section">
+<!-- ============================================================ -->
+<!-- Q4: KEY PATTERNS & ANOMALIES                                 -->
+<!-- ============================================================ -->
+<section class="section" id="q4">
+  <div class="q-banner">
+    <div class="q-banner-num">Q4</div>
+    <div class="q-banner-content">
+      <div class="q-banner-label">Question from the brief</div>
+      <div class="q-banner-question">"What trends, patterns, or outliers stand out? What potential explanations or implications do they suggest?"</div>
+    </div>
+  </div>
+
+  <!-- Trial to paid -->
   <div class="section-head">
-    <h2>90-day <em>action</em> plan</h2>
-    <div class="section-sub">From insight to operating change — with owner and measurement.</div>
+    <h2>Trial-to-paid: <em>where intent</em> goes to die (or thrive)</h2>
+    <div class="section-sub">The percentage of yearly trials that convert to paid — a quality signal cost-per-conversion misses.</div>
+  </div>
+  <div class="grid-2" style="margin-bottom:40px;">
+    <div class="card">
+      <div class="chart-container tall"><canvas id="t2pChart"></canvas></div>
+    </div>
+    <div class="card card-lavender">
+      <div class="card-eyebrow">Pattern · What the data shows</div>
+      <div style="display:flex;flex-direction:column;gap:18px;margin-top:16px;">
+        <div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Influencer IG sends the highest-quality users.</div>
+          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">29% of Influencer IG trials convert to paid — compared to 21% for TikTok Ads and {{ d.markets[2].t2p_pct }}% for the English market average. That means 8–11% more paying customers for the same number of trial starts.</div>
+        </div>
+        <div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Paid social underperforms organic on quality.</div>
+          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">Direct, Word of Mouth, and PR all beat Meta, TikTok, and Google on trial-to-paid. Organic intent converts more reliably than paid intent.</div>
+        </div>
+        <div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Anomaly · TikTok was the wrong audience.</div>
+          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">20.6% trial-to-paid at €70 cost per conversion. The channel was paused after September. This data confirms the pause was the right call.</div>
+        </div>
+        <div>
+          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Anomaly · The English funnel is structurally broken.</div>
+          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">{{ d.markets[2].t2p_pct }}% — the lowest of any market. This is not a media problem. Likely root causes: payment method coverage, content depth, or paywall friction.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Markets -->
+  <div class="section-head" style="margin-bottom:20px;">
+    <h2>Pattern · Three markets, <em>three different</em> stories</h2>
+    <div class="section-sub">The same channel mix produces very different results — that's a signal worth investigating.</div>
   </div>
   <div class="grid-3">
-    <div class="card">
-      <div class="card-eyebrow" style="color: var(--bad);">Weeks 1–2</div>
-      <div class="card-title" style="margin-bottom: 16px;">Stop the bleeding</div>
-      <div class="card-body" style="margin-bottom: 16px;">
-        <div style="margin-bottom: 8px;">• Cap Meta spend at Sept levels (~€350k/mo)</div>
-        <div style="margin-bottom: 8px;">• Kill Influencer YouTube + Partnership Ads (€10k for 1 conversion)</div>
-        <div>• Confirm TikTok pause is intentional</div>
+    {% set flags = {'de': '🇩🇪', 'fr': '🇫🇷', 'en': '🇬🇧'} %}
+    {% set verdicts = {'de': 'Flagship', 'fr': 'Optimize', 'en': 'Fix Funnel'} %}
+    {% set stories = {
+      'de': 'The engine. Best cost per conversion across all markets, and the only market where return on spend exceeds 1.0×. Google Ads in Germany returns exceptionally high — the strongest signal in the dataset.',
+      'fr': 'Healthy intent — highest trial-to-paid rate and highest revenue per conversion — but expensive to reach: ~44% higher cost per conversion than Germany. Coupon usage is highest here; the pricing and promotion strategy needs review.',
+      'en': 'Trial-to-paid is ~10 percentage points below the other markets. This is not a media problem — it is a product, onboarding, or payment problem. Do not scale spend until the funnel is fixed.'
+    } %}
+    {% for mk in d.markets %}
+    <div class="market-card {{ mk.code }}">
+      <div class="market-flag">{{ flags[mk.code] }}</div>
+      <div class="market-name">{{ 'Germany' if mk.name == 'German' else ('France' if mk.name == 'French' else 'English Markets') }}</div>
+      <div class="market-verdict">{{ verdicts[mk.code] }}</div>
+      <div class="market-metrics">
+        <div class="market-metric"><div class="metric-val">{% if mk.spend >= 1e6 %}€{{ "%.2f"|format(mk.spend/1e6) }}M{% else %}€{{ "%.0f"|format(mk.spend/1000) }}k{% endif %}</div><div class="metric-label">Spend</div></div>
+        <div class="market-metric"><div class="metric-val">€{{ "%.2f"|format(mk.cac) }}</div><div class="metric-label">Cost / Conv.</div></div>
+        <div class="market-metric"><div class="metric-val">{{ "%.2f"|format(mk.roas) }}×</div><div class="metric-label">Return on Spend</div></div>
+        <div class="market-metric"><div class="metric-val">{% if mk.subs >= 1000 %}{{ "%.0f"|format(mk.subs/1000) }}k{% else %}{{ mk.subs }}{% endif %}</div><div class="metric-label">Subscribers</div></div>
+        <div class="market-metric"><div class="metric-val">{{ mk.t2p_pct }}%</div><div class="metric-label">Trial → Paid</div></div>
+        <div class="market-metric"><div class="metric-val">€{{ "%.2f"|format(mk.arpu) }}</div><div class="metric-label">Revenue / Conv.</div></div>
       </div>
-      <div style="border-top: 1px solid var(--divider); padding-top: 14px;">
-        <div style="font-size: 10px; font-weight: 700; color: var(--coral); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Owner</div>
-        <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px;">Performance Marketing Lead</div>
-        <div style="font-size: 12px; font-style: italic; color: var(--ink2);">Success: Meta CAC stabilises &lt; €70</div>
-      </div>
+      <div class="market-story">{{ stories[mk.code] }}</div>
     </div>
-    <div class="card">
-      <div class="card-eyebrow" style="color: var(--warn);">Weeks 3–6</div>
-      <div class="card-title" style="margin-bottom: 16px;">Reallocate to winners</div>
-      <div class="card-body" style="margin-bottom: 16px;">
-        <div style="margin-bottom: 8px;">• Increase Influencer IG budget +40% in DE/FR</div>
-        <div style="margin-bottom: 8px;">• Scale Google Ads from 1.3% → 10% of paid budget</div>
-        <div>• Pilot Influencer Podcast at €20k — scale if ROAS &gt; 5×</div>
-      </div>
-      <div style="border-top: 1px solid var(--divider); padding-top: 14px;">
-        <div style="font-size: 10px; font-weight: 700; color: var(--coral); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Owner</div>
-        <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px;">Channel Owners + Analyst</div>
-        <div style="font-size: 12px; font-style: italic; color: var(--ink2);">Success: Blended CAC &lt; €35</div>
-      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- Q5: DATA GAPS & ADDITIONAL INPUTS                            -->
+<!-- ============================================================ -->
+<section class="section" id="q5">
+  <div class="q-banner">
+    <div class="q-banner-num">Q5</div>
+    <div class="q-banner-content">
+      <div class="q-banner-label">Question from the brief</div>
+      <div class="q-banner-question">"What additional data would materially improve your analysis? Describe your end-to-end process in detail, including: How you structured the analysis, key assumptions made, methods and tools used, any limitations or uncertainties."</div>
     </div>
-    <div class="card">
-      <div class="card-eyebrow" style="color: var(--good);">Weeks 7–12</div>
-      <div class="card-title" style="margin-bottom: 16px;">Fix the English funnel</div>
-      <div class="card-body" style="margin-bottom: 16px;">
-        <div style="margin-bottom: 8px;">• Funnel deep-dive: trial → payment → activation in EN</div>
-        <div style="margin-bottom: 8px;">• A/B test simplified checkout, native payment methods</div>
-        <div>• Geo-holdout incrementality test for Meta + Influencer IG</div>
-      </div>
-      <div style="border-top: 1px solid var(--divider); padding-top: 14px;">
-        <div style="font-size: 10px; font-weight: 700; color: var(--coral); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Owner</div>
-        <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px;">Analyst + Product Marketing</div>
-        <div style="font-size: 12px; font-style: italic; color: var(--ink2);">Success: EN trial-to-paid &gt; 22%</div>
-      </div>
+  </div>
+
+  <div class="section-head">
+    <h2>What data we <em>don't have</em> — and why it matters</h2>
+    <div class="section-sub">Every gap below limits the precision of at least one recommendation above.</div>
+  </div>
+
+  <div class="table-wrap" style="margin-bottom:40px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Missing data</th>
+          <th>Business impact of the gap</th>
+          <th>Where to get it</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in gaps.data_gaps %}
+        <tr>
+          <td style="max-width:180px;"><strong>{{ g.gap }}</strong></td>
+          <td style="max-width:300px;">{{ g.impact }}</td>
+          <td style="max-width:260px;">{{ g.suggested_data_source }}</td>
+          <td><span class="priority-{{ g.priority|lower }}">{{ g.priority }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Methodology -->
+  <div class="section-head" style="margin-bottom:20px;">
+    <h2>End-to-end <em>process</em></h2>
+    <div class="section-sub">How the analysis was structured, what was assumed, and what the limits are.</div>
+  </div>
+  <div class="method-grid">
+    <div class="method-card">
+      <div class="method-card-title"><span>1</span> How the analysis was structured</div>
+      <ul>
+        <li>Loaded and cleaned the Excel dataset (1,152 rows × 17 columns) in Python using pandas</li>
+        <li>Separated full dataset from the 434-row subset that has conversion and revenue data</li>
+        <li>Computed derived metrics: CAC, ROAS, trial-to-paid, revenue per conversion</li>
+        <li>Analysed along three dimensions: channel, market, and time (monthly)</li>
+        <li>Generated all outputs at Docker build time so no raw data is processed at runtime</li>
+      </ul>
+    </div>
+    <div class="method-card">
+      <div class="method-card-title"><span>2</span> Key assumptions made</div>
+      <ul>
+        <li>CAC = spend ÷ (monthly paid + yearly paid conversions) — post-trial, not trial-starts</li>
+        <li>ROAS uses New Revenue (Create Date) — subscription start, not first payment</li>
+        <li>UNKNOWN market and channel rows (~25%) are excluded from per-market analysis</li>
+        <li>Rows with null conversion data are excluded from trial-to-paid calculations</li>
+        <li>One anomalous coupon value (1.33 in PR / English / February) is clamped to 1.0</li>
+      </ul>
+    </div>
+    <div class="method-card">
+      <div class="method-card-title"><span>3</span> Methods and tools used</div>
+      <ul>
+        <li>Python · pandas · numpy for all data manipulation (no Excel formulas)</li>
+        <li>IQR method for outlier detection on spend and subscriber columns</li>
+        <li>matplotlib / seaborn for static charts; Chart.js for interactive dashboard charts</li>
+        <li>Flask web framework; Docker for containerisation; GCP Cloud Run for hosting</li>
+        <li>Automated data validation and 11 metric unit tests run at every build</li>
+      </ul>
+    </div>
+    <div class="method-card">
+      <div class="method-card-title"><span>4</span> Limitations and uncertainties</div>
+      <ul>
+        <li>Single year of data — cannot distinguish seasonality from trend</li>
+        <li>No customer-level data — all analysis is at channel × month aggregation</li>
+        <li>62% of rows lack conversion data — channel efficiency analysis covers only the tracked subset</li>
+        <li>Reallocation model assumes constant marginal CAC — likely optimistic at scale</li>
+        <li>No LTV or churn data — recommendations are based on acquisition cost only</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -370,7 +522,7 @@
   <div class="privacy-banner-inner">
     <div class="lock-icon">🔒</div>
     <div>
-      <strong>Privacy &amp; Data Security.</strong>
+      <strong>Privacy & Data Security.</strong>
       Since this analysis involves sensitive subscriber and revenue data, the solution is fully containerized.
       All data processing occurs inside the Docker container at build time. No raw data is exposed via web routes
       at runtime. AI coding agents had zero access to the raw dataset outside the container environment —
@@ -381,12 +533,11 @@
 
 <footer>
   <div class="brand-mark">F</div>
-  <div style="font-family: 'Fraunces', Georgia, serif; font-size: 18px; color: var(--ink); margin-bottom: 8px;">Marketing Performance Diagnostic 2024</div>
+  <div style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:var(--ink);margin-bottom:8px;">Marketing Performance Diagnostic 2024</div>
   <div>Prepared for the the Company CEO &amp; leadership team · Senior Data Analyst – Growth (f/d/m) case study</div>
 </footer>
 
 <script>
-  // Embed the dashboard data for client-side Chart.js rendering
   window.DASHBOARD = {{ dashboard_json|safe }};
 </script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
