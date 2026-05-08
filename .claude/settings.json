@@ -4,7 +4,8 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "Bash(python tests/test_metrics.py)",
-      "Bash(python analysis/generate_all.py)"
+      "Bash(python analysis/generate_all.py)",
+      "Bash(gh run *)"
     ]
   }
 }
