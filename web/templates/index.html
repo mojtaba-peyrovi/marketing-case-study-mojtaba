@@ -556,6 +556,83 @@
   </div>
 </section>
 
+<!-- ============== METRIC DEFINITIONS ============== -->
+<section class="section" id="metrics">
+  <div class="section-head">
+    <h2>Metric <em>definitions</em></h2>
+    <div class="section-sub">Every number in this report uses one of these formulas — no exceptions.</div>
+  </div>
+  <div class="metric-defs-grid">
+
+    <div class="metric-def-card">
+      <div class="metric-def-name">Cost per Conversion (CAC)</div>
+      <div class="metric-def-formula">Marketing Spend ÷ (Monthly Paid Conversions + Yearly Paid Conversions)</div>
+      <div class="metric-def-note">
+        <strong>Why paid conversions, not all subscribers?</strong> A subscriber who starts a free trial but never pays costs money to acquire but generates no revenue. Using only confirmed paying subscribers gives a true picture of acquisition efficiency. This is the industry-standard definition of Customer Acquisition Cost (CAC) for subscription businesses.
+      </div>
+      <div class="metric-def-example">
+        Example: €3,714,189 Meta spend ÷ 53,855 paid conversions = <strong>€68.97 per conversion</strong>
+      </div>
+    </div>
+
+    <div class="metric-def-card">
+      <div class="metric-def-name">Return on Ad Spend (ROAS)</div>
+      <div class="metric-def-formula">New Revenue (Create Date) ÷ Marketing Spend</div>
+      <div class="metric-def-note">
+        <strong>Why Create Date revenue?</strong> Revenue is attributed to the day the subscription <em>started</em> (not the day the first payment was received). This aligns revenue with the campaign that caused the subscription, making channel comparison accurate. A ROAS above 1.0× means the channel generates more revenue than it costs.
+      </div>
+      <div class="metric-def-example">
+        Example: €4,020,313 German revenue ÷ €3,309,947 German spend = <strong>1.21× ROAS</strong>
+      </div>
+    </div>
+
+    <div class="metric-def-card">
+      <div class="metric-def-name">Blended ROAS</div>
+      <div class="metric-def-formula">Total New Revenue (Invoice Date) ÷ Total Marketing Spend</div>
+      <div class="metric-def-note">
+        <strong>Why Invoice Date for blended ROAS?</strong> The blended (company-wide) figure uses Invoice Date revenue — the date the customer <em>actually paid</em>. This is the cash-flow view the CEO uses for financial reporting. The difference from Create Date revenue reflects the 30-day free trial: yearly subscribers start a trial on day 1 but only pay on day 31.
+      </div>
+      <div class="metric-def-example">
+        Example: €6,103,684 total invoice revenue ÷ €5,947,949 total spend = <strong>{{ d.kpis.blended_roas }}× blended ROAS</strong>
+      </div>
+    </div>
+
+    <div class="metric-def-card">
+      <div class="metric-def-name">Trial-to-Paid Rate</div>
+      <div class="metric-def-formula">Yearly Paid Conversions ÷ Yearly Conversions × 100</div>
+      <div class="metric-def-note">
+        <strong>What does this measure?</strong> Of all users who started a yearly trial through a given channel, what percentage went on to pay after the 30-day trial ended. A high rate means the channel attracts users who genuinely want the product. A low rate means the channel attracts curious but uncommitted users — the trial converts cheaply but the payment does not follow.
+      </div>
+      <div class="metric-def-example">
+        Example: 37,711 Influencer IG yearly paid ÷ 129,965 Influencer IG yearly trials = <strong>29.0% trial-to-paid</strong>
+      </div>
+    </div>
+
+    <div class="metric-def-card">
+      <div class="metric-def-name">Revenue per Conversion (ARPU)</div>
+      <div class="metric-def-formula">New Revenue (Invoice Date) ÷ (Monthly Paid + Yearly Paid Conversions)</div>
+      <div class="metric-def-note">
+        <strong>Why use Invoice Date here?</strong> Revenue per conversion reflects actual cash received per paying subscriber — the most useful number for understanding subscription value by market. Monthly subscribers pay immediately; yearly subscribers pay after 30 days. Invoice Date captures both correctly.
+      </div>
+      <div class="metric-def-example">
+        Example: France invoice revenue ÷ France paid conversions = <strong>€{{ "%.2f"|format(d.markets[1].arpu) }} per conversion</strong>
+      </div>
+    </div>
+
+    <div class="metric-def-card">
+      <div class="metric-def-name">Spend Growth % (efficiency gap)</div>
+      <div class="metric-def-formula">(December value ÷ January value − 1) × 100, calculated separately for spend and for paid conversions</div>
+      <div class="metric-def-note">
+        <strong>What does the gap show?</strong> If spend and conversions grew at the same rate, every additional euro invested would return the same efficiency as the first euro. When spend grows faster than conversions — {{ ef.spend_growth_pct }}% vs {{ ef.conv_growth_pct }}% — each new euro is buying fewer conversions than the previous one. That is the definition of declining acquisition efficiency.
+      </div>
+      <div class="metric-def-example">
+        Spend: Jan €347,812 → Dec €593,799 = <strong>+{{ ef.spend_growth_pct }}%</strong> &nbsp;|&nbsp; Paid conv.: Jan 9,750 → Dec 12,909 = <strong>+{{ ef.conv_growth_pct }}%</strong>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- ============== PRIVACY ============== -->
 <div class="privacy-banner">
   <div class="privacy-banner-inner">
