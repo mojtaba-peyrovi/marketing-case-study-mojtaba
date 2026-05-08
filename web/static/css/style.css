@@ -551,7 +551,7 @@ header {
   margin-bottom: 20px;
 }
 
-.market-metric .metric-val { font-size: 26px; color: var(--ink); }
+.market-metric .metric-val { font-size: 26px; }
 
 .market-story {
   font-size: 13.5px;
