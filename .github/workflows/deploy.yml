@@ -9,11 +9,9 @@ jobs:
     name: Build & Deploy
     runs-on: ubuntu-latest
 
-    # Secrets are accessible at job level (NOT workflow level)
     env:
       REGION: europe-west1
       SERVICE: marketing-case-study-mojtaba
-      # Artifact Registry (modern replacement for deprecated gcr.io)
       IMAGE: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/marketing-case-study-mojtaba/marketing-case-study-mojtaba
 
     steps:
@@ -27,6 +25,12 @@ jobs:
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
+
+      # Data file is kept private in GCS — never stored in git
+      - name: Download data from GCS
+        run: |
+          mkdir -p data
+          gsutil cp gs://marketing-case-study-mojtaba-data/data.xlsx data/data.xlsx
 
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
