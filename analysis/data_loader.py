@@ -1,0 +1,91 @@
+"""
+Data Loader — shared utility for all analysis scripts.
+
+Loads data/data.xlsx, cleans it, and adds derived columns used across all five
+analysis questions. Returns two DataFrames:
+  - df_full: all 1,152 rows (used for spend/subscriber analysis)
+  - df_conv: the 434 rows that have non-null conversion + revenue data
+
+Key assumptions:
+- UNKNOWN market/channel rows are tagged but kept in df_full; excluded from df_conv
+- Revenue uses New Revenue Create Date for trend analysis (subscription start date)
+- ROAS = revenue_create_date / marketing_spendings (only where spend > 0)
+- Cost per Subscriber = marketing_spendings / subscriber (only where spend > 0)
+- Monthly name mapping uses standard Python calendar month abbreviations
+"""
+
+import os
+import pandas as pd
+import numpy as np
+
+DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "data.xlsx")
+
+MONTH_NAMES = {
+    1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
+    7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"
+}
+
+
+def load_data():
+    """Return (df_full, df_conv) with derived columns added."""
+    df = pd.read_excel(DATA_PATH)
+
+    # Normalise column names
+    df.columns = [c.strip() for c in df.columns]
+
+    # Derived columns
+    df["month_name"] = df["Business Month"].map(MONTH_NAMES)
+    df["is_unknown"] = (
+        (df["Market"] == "UNKNOWN") |
+        (df["Conversion Channel 1"] == "UNKNOWN") |
+        (df["Conversion Channel 2"] == "UNKNOWN") |
+        (df["Conversion Channel 3"].str.strip() == "UNKNOWN")
+    )
+
+    # Total conversions (monthly + yearly, where available)
+    df["total_conversions"] = df["Monthly Conversions"].fillna(0) + df["Yearly Conversions"].fillna(0)
+
+    # Customer Acquisition Cost (CAC): spend / new subscribers (industry-standard term)
+    df["cac"] = np.where(
+        (df["Marketing Spendings"] > 0) & (df["Subscriber"] > 0),
+        df["Marketing Spendings"] / df["Subscriber"],
+        np.nan
+    )
+
+    # ROAS: revenue (create date) per unit of spend
+    df["roas"] = np.where(
+        df["Marketing Spendings"] > 0,
+        df["New Revenue Create Date"].fillna(0) / df["Marketing Spendings"],
+        np.nan
+    )
+
+    # Revenue per subscriber
+    df["revenue_per_subscriber"] = np.where(
+        df["Subscriber"] > 0,
+        df["New Revenue Create Date"].fillna(0) / df["Subscriber"],
+        np.nan
+    )
+
+    # Conversion rate: total_conversions / subscriber (for rows with both)
+    df["conversion_rate"] = np.where(
+        df["Subscriber"] > 0,
+        df["total_conversions"] / df["Subscriber"],
+        np.nan
+    )
+
+    # df_conv: rows with meaningful conversion data (non-null Monthly + Yearly conversions)
+    df_conv = df[
+        df["Monthly Conversions"].notna() &
+        df["Yearly Conversions"].notna() &
+        (~df["is_unknown"])
+    ].copy()
+
+    return df, df_conv
+
+
+if __name__ == "__main__":
+    df_full, df_conv = load_data()
+    print(f"Full dataset: {len(df_full)} rows")
+    print(f"Conversion dataset: {len(df_conv)} rows")
+    print(f"Markets: {df_full['Market'].unique().tolist()}")
+    print(f"Channel 2 types: {df_full['Conversion Channel 2'].unique().tolist()}")
