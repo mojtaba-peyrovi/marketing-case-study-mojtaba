@@ -507,6 +507,55 @@
     </table>
   </div>
 
+  <!-- Column naming recommendations -->
+  <div class="section-head" style="margin-bottom:20px;margin-top:48px;">
+    <h2>Column naming <em>recommendations</em></h2>
+    <div class="section-sub">The current schema works but would benefit from clearer naming before scaling to more analysts.</div>
+  </div>
+  <div class="table-wrap" style="margin-bottom:40px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Current name</th>
+          <th>Problem</th>
+          <th>Suggested name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>row_num</code></td>
+          <td>Carries no analytical value. Row position is implicit in any table and changes if rows are reordered or filtered.</td>
+          <td>Remove entirely, or replace with a stable <code>record_id</code> if deduplication is needed.</td>
+        </tr>
+        <tr>
+          <td><code>Conversion Channel 1 / 2 / 3</code></td>
+          <td>Numbers imply a ranking or priority. They actually represent hierarchy levels: broad type → category → specific channel.</td>
+          <td><code>channel_type</code>, <code>channel_category</code>, <code>channel_name</code></td>
+        </tr>
+        <tr>
+          <td><code>Monthly Conversions</code><br><code>Yearly Conversions</code></td>
+          <td>Sounds like "conversions aggregated by month/year." Actually means "subscribers who chose a monthly plan" vs "subscribers who chose a yearly plan." The time dimension is unrelated to the plan type.</td>
+          <td><code>monthly_plan_starts</code>, <code>yearly_plan_starts</code></td>
+        </tr>
+        <tr>
+          <td><code>Monthly Paid Conversions</code><br><code>Yearly Paid Conversions</code></td>
+          <td>Same ambiguity as above, plus "Paid" is vague — does it mean the plan is paid, or that the customer has paid?</td>
+          <td><code>monthly_plan_paid</code>, <code>yearly_plan_paid</code></td>
+        </tr>
+        <tr>
+          <td><code>Share Coupon Used</code><br><code>Share Student Coupon Used</code></td>
+          <td>"Share" is a financial term (equity stake) and a social media term. Here it means "proportion" or "rate." Ambiguous to anyone reading the schema cold.</td>
+          <td><code>coupon_usage_rate</code>, <code>student_coupon_usage_rate</code></td>
+        </tr>
+        <tr>
+          <td><code>New Revenue Create Date</code><br><code>New Revenue Invoice Date</code></td>
+          <td>Reads like a date column, not a revenue column. The word "Date" describes the attribution method, not the data type.</td>
+          <td><code>revenue_subscription_start</code>, <code>revenue_first_payment</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <!-- Methodology -->
   <div class="section-head" style="margin-bottom:20px;">
     <h2>End-to-end <em>process</em></h2>
