@@ -401,6 +401,27 @@
     <h2>Pattern · Three markets, <em>three different</em> stories</h2>
     <div class="section-sub">The same channel mix produces very different results — that's a signal worth investigating.</div>
   </div>
+
+  <!-- Trial-to-paid per market summary -->
+  <div class="t2p-market-strip">
+    {% set max_t2p = d.markets | map(attribute='t2p_pct') | max %}
+    {% for mk in d.markets %}
+    {% set flags = {'de': '🇩🇪', 'fr': '🇫🇷', 'en': '🇬🇧'} %}
+    <div class="t2p-market-bar">
+      <div class="t2p-market-label">
+        <span>{{ flags[mk.code] }} {{ 'Germany' if mk.name == 'German' else ('France' if mk.name == 'French' else 'English') }}</span>
+        <strong class="t2p-market-pct t2p-{{ mk.code }}">{{ mk.t2p_pct }}%</strong>
+      </div>
+      <div class="t2p-track">
+        <div class="t2p-fill t2p-fill-{{ mk.code }}" style="width: {{ (mk.t2p_pct / 35 * 100) | round(1) }}%"></div>
+      </div>
+      <div class="t2p-market-note">{{ mk.t2p_pct }}% of yearly trials convert to paying subscribers</div>
+    </div>
+    {% endfor %}
+    <div class="t2p-market-callout">
+      English market converts <strong>{{ "%.0f"|format(d.markets[0].t2p_pct - d.markets[2].t2p_pct) }} percentage points fewer</strong> trials than Germany — on a similar cost per conversion (€{{ d.markets[2].cac }} vs €{{ d.markets[0].cac }}). Fixing the English funnel would yield more paying subscribers without any additional spend.
+    </div>
+  </div>
   <div class="grid-3">
     {% set flags = {'de': '🇩🇪', 'fr': '🇫🇷', 'en': '🇬🇧'} %}
     {% set verdicts = {'de': 'Flagship', 'fr': 'Optimize', 'en': 'Fix Funnel'} %}

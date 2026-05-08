@@ -427,6 +427,76 @@ header {
 
 .ch-bar-label { font-size: 10px; color: var(--ink3); letter-spacing: 0.5px; }
 
+/* ===== Trial-to-paid market summary strip ===== */
+.t2p-market-strip {
+  background: white;
+  border: 1px solid var(--divider);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.t2p-market-bar { display: flex; flex-direction: column; gap: 6px; }
+
+.t2p-market-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink2);
+}
+
+.t2p-market-pct {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.t2p-de { color: var(--good); }
+.t2p-fr { color: var(--warn); }
+.t2p-en { color: var(--bad); }
+
+.t2p-track {
+  height: 10px;
+  background: var(--lav-soft);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.t2p-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 800ms ease;
+}
+
+.t2p-fill-de { background: var(--good); }
+.t2p-fill-fr { background: var(--warn); }
+.t2p-fill-en { background: var(--bad); }
+
+.t2p-market-note {
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: 0.2px;
+}
+
+.t2p-market-callout {
+  background: #FFF3F0;
+  border-left: 3px solid var(--coral);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.55;
+  margin-top: 4px;
+}
+
+.t2p-market-callout strong { color: var(--ink); }
+
 /* ===== Markets ===== */
 .market-card {
   background: white;
