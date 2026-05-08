@@ -7,7 +7,9 @@ CAC convention here:  CAC = Marketing Spend / (Monthly Paid + Yearly Paid Conver
 This is a stricter post-trial CAC (excludes trial-only subscribers) and is the
 industry standard for paid-channel evaluation.
 
-ROAS convention: New Revenue (Create Date) / Marketing Spend.
+ROAS convention: New Revenue (Invoice Date) / Marketing Spend.
+Invoice Date is used because it represents revenue actually received (confirmed payments).
+Create Date includes trial starters who may never pay, which would overstate ROAS.
 Trial-to-paid:   Yearly Paid Conversions / Yearly Conversions (per channel).
 """
 
@@ -62,7 +64,6 @@ def run(df_full, df_conv):
 
     total_spend = float(df["Marketing Spendings"].sum())
     total_subs = int(df["Subscriber"].sum())
-    total_rev_create = float(df["New Revenue Create Date"].sum())
     total_rev_invoice = float(df["New Revenue Invoice Date"].sum())
     total_paid_conv = float(df["paid_conversions"].sum())
     blended_roas = round(total_rev_invoice / total_spend, 2) if total_spend else None
@@ -75,7 +76,7 @@ def run(df_full, df_conv):
     monthly = df.groupby("Business Month").agg(
         spend=("Marketing Spendings", "sum"),
         paid_conv=("paid_conversions", "sum"),
-        revenue=("New Revenue Create Date", "sum"),
+        revenue=("New Revenue Invoice Date", "sum"),
     ).reindex(range(1, 13)).reset_index()
 
     spend_jan = float(monthly.iloc[0]["spend"])
@@ -93,7 +94,7 @@ def run(df_full, df_conv):
     q = df.groupby("quarter", observed=True).agg(
         spend=("Marketing Spendings", "sum"),
         paid=("paid_conversions", "sum"),
-        rev=("New Revenue Create Date", "sum"),
+        rev=("New Revenue Invoice Date", "sum"),
     )
     q["cac"] = (q["spend"] / q["paid"]).round(2)
     q["roas"] = (q["rev"] / q["spend"]).round(2)
@@ -113,7 +114,7 @@ def run(df_full, df_conv):
 
     meta_total_spend = float(meta["Marketing Spendings"].sum())
     meta_total_paid = float(meta["paid_conversions"].sum())
-    meta_total_rev = float(meta["New Revenue Create Date"].sum())
+    meta_total_rev = float(meta["New Revenue Invoice Date"].sum())
     meta_full_year_cac = round(meta_total_spend / meta_total_paid, 2)
     meta_full_year_roas = round(meta_total_rev / meta_total_spend, 2)
     paid_total_spend = float(df[df["Marketing Spendings"] > 0]["Marketing Spendings"].sum())
@@ -129,7 +130,7 @@ def run(df_full, df_conv):
         spend=("Marketing Spendings", "sum"),
         subs=("Subscriber", "sum"),
         paid=("paid_conversions", "sum"),
-        rev=("New Revenue Create Date", "sum"),
+        rev=("New Revenue Invoice Date", "sum"),
         yc=("Yearly Conversions", "sum"),
         yp=("Yearly Paid Conversions", "sum"),
     ).reset_index().rename(columns={"Conversion Channel 3": "channel"})
