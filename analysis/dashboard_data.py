@@ -36,8 +36,10 @@ def _verdict(channel, spend, cac, roas, t2p, full_year_paid_share):
         return "Kill"
     if channel == "TikTok Ads":
         return "Paused"
-    if cac is None or roas is None:
+    if spend == 0 or spend is None:
         return "Organic"
+    if cac is None:
+        return "Kill"
     if roas >= 3.0 and cac < 30:
         return "Scale"
     if roas >= 5.0:
@@ -64,7 +66,7 @@ def run(df_full, df_conv):
 
     total_spend = float(df["Marketing Spendings"].sum())
     total_subs = int(df["Subscriber"].sum())
-    total_rev_invoice = float(df["New Revenue Invoice Date"].sum())
+    total_rev_invoice = float(df["  "].sum())
     # total_paid_conv = float(df["paid_conversions"].sum())
     blended_roas = round(total_rev_invoice / total_spend, 2) if total_spend else None
 
