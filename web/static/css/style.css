@@ -293,7 +293,7 @@ header {
 
 .kpi-trend.up { color: var(--good); }
 .kpi-trend.down { color: var(--bad); }
-.kpi-trend.warn { color: var(--warn); }
+.kpi-trend.warn { color: var(--bad); }
 
 .kpi-trend::before {
   content: '';
@@ -303,7 +303,7 @@ header {
 }
 .kpi-trend.up::before { border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 8px solid var(--good); }
 .kpi-trend.down::before { border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 8px solid var(--bad); }
-.kpi-trend.warn::before { border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 8px solid var(--warn); }
+.kpi-trend.warn::before { border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 8px solid var(--bad); }
 
 /* ===== Section ===== */
 .section {
