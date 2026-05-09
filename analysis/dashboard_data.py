@@ -173,17 +173,17 @@ def run(df_full, df_conv):
             "verdict": v,
         })
 
-    # Trial-to-paid chart: all channels with t2p, sorted desc, exclude very-low-volume
+    # Trial-to-paid chart: all channels with t2p, sorted desc, exclude very-low-volume.
+    # Two categories only: paid media vs organic/earned — matches the narrative.
+    PAID_CHANNELS = {
+        "Facebook/Instagram Ads", "Google Ads",
+        "Influencer Instagram", "Influencer Podcast",
+        "TikTok Ads", "Youtube Ads",
+    }
     t2p_data = []
     for _, r in ch_agg[(ch_agg["yc"] >= 50) & ch_agg["t2p_pct"].notna()].sort_values("t2p_pct", ascending=False).iterrows():
-        # Color category: paid (coral), organic (purple), warning (yellow), bad (red)
         ch = r["channel"]
-        if ch in ("Facebook/Instagram Ads", "Google Ads", "Influencer Instagram", "Influencer Podcast"):
-            cat = "paid_good" if r["t2p_pct"] >= 28 else "paid"
-        elif ch in ("TikTok Ads", "Youtube Ads"):
-            cat = "paid_warn"
-        else:
-            cat = "organic"
+        cat = "paid" if ch in PAID_CHANNELS else "organic"
         t2p_data.append({
             "channel": ch,
             "t2p_pct": float(r["t2p_pct"]),

@@ -157,10 +157,8 @@
   const t2pCtx = document.getElementById('t2pChart');
   if (t2pCtx) {
     const colorMap = {
-      paid_good: '#1F7A4D',
-      paid:      '#FF4A1F',
-      paid_warn: '#C25A00',
-      organic:   '#B9A3E0',
+      paid:    '#FF4A1F',  // coral — paid media
+      organic: '#B9A3E0',  // lavender — organic / earned
     };
     const data = D.trial_to_paid;
     new Chart(t2pCtx, {
@@ -170,7 +168,7 @@
         datasets: [{
           label: 'Trial-to-Paid %',
           data: data.map(d => d.t2p_pct),
-          backgroundColor: data.map(d => colorMap[d.category] || '#B9A3E0'),
+          backgroundColor: data.map(d => colorMap[d.category] || colorMap.organic),
           borderRadius: 4,
         }]
       },
@@ -179,7 +177,19 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12, boxHeight: 12, padding: 14,
+              font: { size: 12 },
+              generateLabels: () => ([
+                { text: 'Paid media',       fillStyle: colorMap.paid,    strokeStyle: colorMap.paid,    lineWidth: 0 },
+                { text: 'Organic / earned', fillStyle: colorMap.organic, strokeStyle: colorMap.organic, lineWidth: 0 },
+              ])
+            }
+          },
           tooltip: { callbacks: { label: ctx => ctx.parsed.x.toFixed(1) + '%' } }
         },
         scales: {
