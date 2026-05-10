@@ -119,7 +119,7 @@
       <div class="finding-num f1">1</div>
       <div>
         <div class="finding-head">We are paying for growth we already had.</div>
-        <div class="finding-body">Meta absorbs <strong>{{ m.share_of_paid_pct }}% of paid budget</strong> at €{{ m.full_year_cac }} CAC and {{ m.full_year_roas }}× return on spend — and the cost has worsened from €{{ "%.0f"|format(m.jan_cac) }} in January to €{{ "%.0f"|format(m.dec_cac) }} in December (<strong>+{{ m.cac_inflation_pct }}%</strong>). We are scaling a channel whose efficiency is collapsing.</div>
+        <div class="finding-body">Meta absorbs <strong>{{ m.share_of_paid_pct }}% of paid budget</strong> at €{{ m.full_year_cac }} CAC and {{ m.full_year_roas }}× ROAS — and the cost has worsened from €{{ "%.0f"|format(m.jan_cac) }} in January to €{{ "%.0f"|format(m.dec_cac) }} in December (<strong>+{{ m.cac_inflation_pct }}%</strong>). We are scaling a channel whose efficiency is collapsing.</div>
       </div>
     </div>
     <div class="finding">
@@ -129,7 +129,7 @@
         <div class="finding-body">
           <ul class="finding-list">
             <li><strong>Influencer Podcast</strong> — 15.17× ROAS (€2,700 spend → €40,958 revenue), yet receives less than 0.05% of paid budget.</li>
-            <li><strong>Google Ads</strong> — 3.80× return on spend at €9.71 per conversion, but gets only 1.3% of paid budget.</li>
+            <li><strong>Google Ads</strong> — 3.80× ROAS at €9.71 per conversion, but gets only 1.3% of paid budget.</li>
             <li><strong>Influencer Instagram</strong> — highest trial-to-paid rate of any paid channel (29%) at €37.35 per conversion, yet captures just 28.6% of budget.</li>
           </ul>
         </div>
@@ -162,7 +162,7 @@
       <div class="kpi-trend up">Actual payments received</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Blended Return on Spend</div>
+      <div class="kpi-label">Blended ROAS</div>
       <div class="kpi-value">{{ k.blended_roas }}×</div>
       <div class="kpi-trend down">Acquisition cost rising each quarter</div>
     </div>
@@ -290,7 +290,7 @@
         <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:40px;line-height:1;color:var(--bad);letter-spacing:-1px;">+{{ m.cac_inflation_pct }}%</div>
         <div style="font-size:12px;color:var(--ink3);margin-bottom:20px;margin-top:4px;">Meta cost-per-conversion inflation over same period</div>
         <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:40px;line-height:1;color:var(--bad);letter-spacing:-1px;">{{ m.full_year_roas }}×</div>
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:20px;margin-top:4px;">Meta full-year return on spend (below break-even of 1.0×)</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:20px;margin-top:4px;">Meta full-year ROAS (below break-even of 1.0×)</div>
         <div style="font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:40px;line-height:1;color:var(--ink);letter-spacing:-1px;">{{ m.share_of_paid_pct }}%</div>
         <div style="font-size:12px;color:var(--ink3);margin-top:4px;">of total paid budget concentrated in one channel</div>
       </div>
@@ -299,7 +299,7 @@
 
   <div class="section-head" style="margin-bottom:20px;">
     <h2>Channel P&amp;L — <em>every paid channel</em> with a verdict</h2>
-    <div class="section-sub">CAC and return on spend — verdict in the corner.</div>
+    <div class="section-sub">CAC and ROAS — verdict in the corner.</div>
   </div>
   <div class="channel-grid" style="margin-bottom:40px;">
     {% for c in d.channels %}
@@ -321,7 +321,7 @@
         </div>
         <div class="metric">
           <div class="metric-val {{ roas_class }}">{{ "%.2f"|format(c.roas) }}×</div>
-          <div class="metric-label">Return on Spend</div>
+          <div class="metric-label">ROAS</div>
         </div>
         <div class="metric">
           <div class="metric-val">{% if c.t2p_pct %}{{ c.t2p_pct }}%{% else %}—{% endif %}</div>
@@ -444,7 +444,7 @@
   <div class="grid-3">
     {% set verdicts = {'de': 'Flagship', 'fr': 'Optimize', 'en': 'Fix Funnel'} %}
     {% set stories = {
-      'de': 'The engine. Best CAC across all language groups, and the only audience where return on spend exceeds 1.0×. Google Ads in the German-language segment returns exceptionally high — the strongest signal in the dataset.',
+      'de': 'The engine. Best CAC across all language groups, and the only audience where ROAS exceeds 1.0×. Google Ads in the German-language segment returns exceptionally high — the strongest signal in the dataset.',
       'fr': 'Healthy intent — highest trial-to-paid rate and highest revenue per conversion — but expensive to reach: ~44% higher CAC than the German-language audience. Coupon usage is highest here; the pricing and promotion strategy needs review.',
       'en': 'Trial-to-paid is ~10 percentage points below the other language groups. This may indicate a product, onboarding, or payment issue — but the dataset lacks funnel-stage data (impressions → clicks → trial starts) needed to confirm where the drop-off occurs. Scaling spend should be approached cautiously until the root cause is understood.'
     } %}
@@ -463,7 +463,7 @@
         </div>
         <div class="market-metric">
           <div class="metric-val {{ 'good' if mk.roas >= 1.0 else 'bad' }}">{{ "%.2f"|format(mk.roas) }}×</div>
-          <div class="metric-label">Return on Spend</div>
+          <div class="metric-label">ROAS</div>
         </div>
         <div class="market-metric">
           <div class="metric-val">{% if mk.subs >= 1000 %}{{ "%.0f"|format(mk.subs/1000) }}k{% else %}{{ mk.subs }}{% endif %}</div>
