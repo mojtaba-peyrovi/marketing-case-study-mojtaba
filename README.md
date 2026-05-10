@@ -24,7 +24,7 @@ docker compose up --build
 | 1 | **Executive Summary** — KPIs, top findings, blended ROAS |
 | 2 | **Recommendations & Visualizations** — Actionable steps with Chart.js charts |
 | 3 | **Budget Allocation Hypotheses** — Channel P&L with Scale / Reduce / Kill verdicts |
-| 4 | **Key Patterns & Anomalies** — Efficiency gap, Meta deep-dive, trial-to-paid by channel |
+| 4 | **Key Patterns & Anomalies** — Cost-vs-quality quadrant scatter; named outliers (in-chart spotlights + extreme exclusions) |
 | 5 | **Data Gaps & Additional Inputs** — What data would sharpen the analysis |
 
 ## Analysis Pipeline

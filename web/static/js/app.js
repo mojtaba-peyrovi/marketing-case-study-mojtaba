@@ -2,7 +2,7 @@
    Reads window.DASHBOARD (embedded JSON from server) and renders three charts:
    1. Efficiency gap (indexed line)
    2. Meta deep dive (bar + line dual-axis)
-   3. Trial-to-paid by channel (horizontal bar)
+   3. Q4 cost-vs-quality quadrant scatter (bubble)
 */
 
 (function () {
@@ -153,55 +153,188 @@
     });
   }
 
-  // ── Trial-to-paid horizontal bar ───────────────────────────────────────
-  const t2pCtx = document.getElementById('t2pChart');
-  if (t2pCtx) {
-    const colorMap = {
-      paid:    '#FF4A1F',  // coral — paid media
-      organic: '#B9A3E0',  // lavender — organic / earned
+  // ── Q4 quadrant scatter: cost vs quality ─────────────────────────────────
+  const quadCtx = document.getElementById('quadrantChart');
+  if (quadCtx && D.q4_quadrant) {
+    const Q = D.q4_quadrant;
+
+    // Quadrant palette (lavender-on-good, coral-on-bad).
+    const QUADRANT_FILL = {
+      efficient_high_quality: '#7C5CB8', // deep lavender — best
+      premium:                '#B9A3E0', // light lavender
+      cheap_moderate:         '#C9BBA8', // muted neutral
+      wasted_spend:           '#FF4A1F', // coral — worst
     };
-    const data = D.trial_to_paid;
-    new Chart(t2pCtx, {
-      type: 'bar',
+    const QUADRANT_BG = {
+      efficient_high_quality: 'rgba(124, 92, 184, 0.08)',
+      premium:                'rgba(185, 163, 224, 0.10)',
+      cheap_moderate:         'rgba(201, 187, 168, 0.12)',
+      wasted_spend:           'rgba(255, 74, 31, 0.07)',
+    };
+    const QUADRANT_TITLE = {
+      efficient_high_quality: 'Efficient + High Quality',
+      premium:                'Premium — quality at a price',
+      cheap_moderate:         'Cheap entry, moderate quality',
+      wasted_spend:           'Wasted spend',
+    };
+
+    // Axis ranges — fixed so reference lines and labels stay in known positions.
+    const X_MIN = 0, X_MAX = 80;
+    const Y_MIN = 15, Y_MAX = 35;
+
+    // Bubble radius: sqrt-scaled by spend (so a 100x spend gap reads as 10x area, not 100x).
+    const maxSpend = Math.max(...Q.points.map(p => p.spend));
+    const R_MIN = 9, R_MAX = 40;
+    const radius = (spend) =>
+      R_MIN + (R_MAX - R_MIN) * Math.sqrt(Math.max(spend, 1) / maxSpend);
+
+    const scatterData = Q.points.map(p => ({
+      x: p.cac,
+      y: p.t2p_pct,
+      r: radius(p.spend),
+      _channel: p.channel,
+      _spend: p.spend,
+      _share: p.spend_share_pct,
+      _quadrant: p.quadrant,
+    }));
+
+    // Plugin · paint quadrant backgrounds + median reference lines + corner labels.
+    const quadrantBackdrop = {
+      id: 'quadrantBackdrop',
+      beforeDatasetsDraw(chart) {
+        const { ctx, chartArea, scales: { x, y } } = chart;
+        if (!chartArea) return;
+        const xMid = x.getPixelForValue(Q.median_cac);
+        const yMid = y.getPixelForValue(Q.median_t2p_pct);
+
+        ctx.save();
+        // 4 quadrant background fills
+        ctx.fillStyle = QUADRANT_BG.efficient_high_quality;
+        ctx.fillRect(chartArea.left, chartArea.top, xMid - chartArea.left, yMid - chartArea.top);
+        ctx.fillStyle = QUADRANT_BG.premium;
+        ctx.fillRect(xMid, chartArea.top, chartArea.right - xMid, yMid - chartArea.top);
+        ctx.fillStyle = QUADRANT_BG.cheap_moderate;
+        ctx.fillRect(chartArea.left, yMid, xMid - chartArea.left, chartArea.bottom - yMid);
+        ctx.fillStyle = QUADRANT_BG.wasted_spend;
+        ctx.fillRect(xMid, yMid, chartArea.right - xMid, chartArea.bottom - yMid);
+
+        // Median reference lines
+        ctx.strokeStyle = '#7A7068';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(xMid, chartArea.top);
+        ctx.lineTo(xMid, chartArea.bottom);
+        ctx.moveTo(chartArea.left, yMid);
+        ctx.lineTo(chartArea.right, yMid);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Corner labels
+        ctx.font = "600 11px 'Inter', sans-serif";
+        ctx.fillStyle = '#7A7068';
+        const pad = 8;
+        ctx.textBaseline = 'top';
+        ctx.textAlign = 'left';
+        ctx.fillText(QUADRANT_TITLE.efficient_high_quality, chartArea.left + pad, chartArea.top + pad);
+        ctx.textAlign = 'right';
+        ctx.fillText(QUADRANT_TITLE.premium, chartArea.right - pad, chartArea.top + pad);
+        ctx.textBaseline = 'bottom';
+        ctx.textAlign = 'left';
+        ctx.fillText(QUADRANT_TITLE.cheap_moderate, chartArea.left + pad, chartArea.bottom - pad);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#FF4A1F';
+        ctx.fillText(QUADRANT_TITLE.wasted_spend, chartArea.right - pad, chartArea.bottom - pad);
+
+        // Median tick label on the dashed lines
+        ctx.fillStyle = '#7A7068';
+        ctx.font = "500 10px 'Inter', sans-serif";
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillText('median CAC €' + Q.median_cac.toFixed(2),
+                     xMid + 4, chartArea.bottom - 14);
+        ctx.fillText('median t2p ' + Q.median_t2p_pct + '%',
+                     chartArea.left + 4, yMid - 14);
+
+        ctx.restore();
+      }
+    };
+
+    // Plugin · channel name labels next to each bubble.
+    const channelLabels = {
+      id: 'channelLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+        ctx.save();
+        ctx.font = "600 11px 'Inter', sans-serif";
+        ctx.fillStyle = '#1A1714';
+        ctx.textBaseline = 'middle';
+        meta.data.forEach((point, i) => {
+          const d = scatterData[i];
+          const r = d.r;
+          // Place label to the right of the bubble, except for FB/Insta
+          // which is far right — put its label to the left.
+          const isFarRight = d.x > 60;
+          ctx.textAlign = isFarRight ? 'right' : 'left';
+          const tx = isFarRight ? point.x - r - 6 : point.x + r + 6;
+          ctx.fillText(d._channel, tx, point.y);
+        });
+        ctx.restore();
+      }
+    };
+
+    new Chart(quadCtx, {
+      type: 'bubble',
       data: {
-        labels: data.map(d => d.channel),
         datasets: [{
-          label: 'Trial-to-Paid %',
-          data: data.map(d => d.t2p_pct),
-          backgroundColor: data.map(d => colorMap[d.category] || colorMap.organic),
-          borderRadius: 4,
+          label: 'Paid channel',
+          data: scatterData,
+          backgroundColor: scatterData.map(d => QUADRANT_FILL[d._quadrant] + 'CC'), // ~80% alpha
+          borderColor:     scatterData.map(d => QUADRANT_FILL[d._quadrant]),
+          borderWidth: 1.5,
         }]
       },
       options: {
-        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { top: 8, right: 12, bottom: 8, left: 8 } },
         plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            align: 'end',
-            labels: {
-              boxWidth: 12, boxHeight: 12, padding: 14,
-              font: { size: 12 },
-              generateLabels: () => ([
-                { text: 'Paid media',       fillStyle: colorMap.paid,    strokeStyle: colorMap.paid,    lineWidth: 0 },
-                { text: 'Organic / earned', fillStyle: colorMap.organic, strokeStyle: colorMap.organic, lineWidth: 0 },
-              ])
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: items => items[0].raw._channel,
+              label: ctx => {
+                const d = ctx.raw;
+                return [
+                  'CAC: €' + d.x.toFixed(2),
+                  'Trial-to-paid: ' + d.y.toFixed(1) + '%',
+                  'Spend: €' + d._spend.toLocaleString('en-US', {maximumFractionDigits: 0}) + ' (' + d._share.toFixed(2) + '% of paid)',
+                  'Quadrant: ' + QUADRANT_TITLE[d._quadrant],
+                ];
+              }
             }
-          },
-          tooltip: { callbacks: { label: ctx => ctx.parsed.x.toFixed(1) + '%' } }
+          }
         },
         scales: {
           x: {
-            beginAtZero: true,
-            max: 35,
-            ticks: { callback: v => v + '%' },
-            grid: { color: '#E6DCD0', drawBorder: false }
+            type: 'linear',
+            min: X_MIN, max: X_MAX,
+            grid: { color: '#E6DCD0', drawBorder: false },
+            title: { display: true, text: 'CAC (€) — cost to acquire one paying subscriber',
+                     color: '#7A7068', font: { size: 11, weight: '600' } },
+            ticks: { callback: v => '€' + v }
           },
-          y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+          y: {
+            min: Y_MIN, max: Y_MAX,
+            grid: { color: '#E6DCD0', drawBorder: false },
+            title: { display: true, text: 'Trial-to-paid (%) — share of yearly trials that convert',
+                     color: '#7A7068', font: { size: 11, weight: '600' } },
+            ticks: { callback: v => v + '%' }
+          }
         }
-      }
+      },
+      plugins: [quadrantBackdrop, channelLabels]
     });
   }
 })();

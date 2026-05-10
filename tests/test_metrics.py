@@ -149,6 +149,72 @@ def test_coupon_share_in_range():
         assert (col_vals <= 1).all(), f"{col} has values above 1 (above 100%)"
 
 
+# ── Q4 quadrant tests (cost vs quality scatter) ───────────────────────────────
+
+def _load_quadrant():
+    """Load the q4_quadrant block from the generated dashboard.json."""
+    import json
+    path = os.path.join(os.path.dirname(__file__), "..", "output", "data", "dashboard.json")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)["q4_quadrant"]
+
+
+def test_q4_medians_match_hand_computed():
+    """Median CAC and t2p must equal hand-computed medians of the 5 included paid channels.
+    CACs sorted: 2.85, 9.71, 37.35, 68.97, 69.99 → median 37.35
+    t2p sorted:  20.6, 21.7, 25.6, 28.9, 29.0   → median 25.6
+    """
+    q = _load_quadrant()
+    assert q["median_cac"] == 37.35, f"median CAC mismatch: {q['median_cac']}"
+    assert q["median_t2p_pct"] == 25.6, f"median t2p mismatch: {q['median_t2p_pct']}"
+
+
+def test_q4_excludes_extreme_outliers():
+    """Influencer Youtube (€6,540 CAC) and Partnership Ads (zero conv) must NOT be in points."""
+    q = _load_quadrant()
+    in_chart = {p["channel"] for p in q["points"]}
+    excluded = {e["channel"] for e in q["excluded_outliers"]}
+    assert "Influencer Youtube" not in in_chart
+    assert "Partnership Ads" not in in_chart
+    assert excluded == {"Influencer Youtube", "Partnership Ads"}
+
+
+def test_q4_quadrant_assignments():
+    """Each known channel falls in the expected quadrant given the medians."""
+    q = _load_quadrant()
+    by_ch = {p["channel"]: p["quadrant"] for p in q["points"]}
+    expected = {
+        "Facebook/Instagram Ads": "premium",                  # cac>median, t2p==median (top half)
+        "Influencer Instagram":   "efficient_high_quality",   # cac==median (left), t2p>median
+        "TikTok Ads":             "wasted_spend",             # cac>median, t2p<median
+        "Google Ads":             "cheap_moderate",            # cac<median, t2p<median
+        "Influencer Podcast":     "efficient_high_quality",   # cac<median, t2p>median
+    }
+    for ch, want in expected.items():
+        assert by_ch.get(ch) == want, f"{ch}: got {by_ch.get(ch)}, want {want}"
+
+
+def test_q4_spend_shares_sum_to_paid_total():
+    """Spend shares of in-chart points + excluded outliers + any other paid channels = 100%."""
+    q = _load_quadrant()
+    in_chart_spend = sum(p["spend"] for p in q["points"])
+    excluded_spend = sum(e["spend"] for e in q["excluded_outliers"])
+    # in_chart + excluded = total paid spend (no paid channel left out)
+    assert abs(in_chart_spend + excluded_spend - q["total_paid_spend"]) < 1.0, (
+        f"spend reconciliation failed: in_chart={in_chart_spend} + excluded={excluded_spend} "
+        f"!= total_paid={q['total_paid_spend']}"
+    )
+
+
+def test_q4_spotlight_outliers():
+    """Spotlight outliers must be deterministic: biggest spender, cheapest CAC, only waste-quadrant."""
+    q = _load_quadrant()
+    s = q["spotlight_outliers"]
+    assert s["biggest_spender"]["channel"] == "Facebook/Instagram Ads"
+    assert s["cheapest_cac"]["channel"] == "Influencer Podcast"
+    assert s["wasted_spend"]["channel"] == "TikTok Ads"
+
+
 # ── Runner ────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":

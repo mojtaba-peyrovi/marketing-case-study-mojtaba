@@ -383,104 +383,128 @@
     </div>
   </div>
 
-  <!-- Trial to paid -->
+  {% set q = d.q4_quadrant %}
+  {% set q_labels = {
+    'efficient_high_quality': 'Efficient + High Quality',
+    'premium': 'Premium — quality at a price',
+    'cheap_moderate': 'Cheap entry, moderate quality',
+    'wasted_spend': 'Wasted spend'
+  } %}
+  {% set channels_in = {
+    'efficient_high_quality': q.points | selectattr('quadrant','equalto','efficient_high_quality') | list,
+    'premium':                q.points | selectattr('quadrant','equalto','premium') | list,
+    'cheap_moderate':         q.points | selectattr('quadrant','equalto','cheap_moderate') | list,
+    'wasted_spend':           q.points | selectattr('quadrant','equalto','wasted_spend') | list,
+  } %}
+
   <div class="section-head">
-    <h2>Trial-to-paid: <em>where intent</em> goes to die (or thrive)</h2>
-    <div class="section-sub">The percentage of yearly trials that convert to paid — a quality signal cost-per-conversion misses.</div>
+    <h2>Cost vs quality: <em>where every paid euro</em> really lands</h2>
+    <div class="section-sub">Every paid channel mapped on two axes — what it costs to acquire (CAC) and how well its trials convert to paying (trial-to-paid). Bubble size = total spend. Reference lines drawn at the dataset median: <strong>€{{ "%.2f"|format(q.median_cac) }} CAC</strong> and <strong>{{ q.median_t2p_pct }}% trial-to-paid</strong>. The pattern: spend is not following quality.</div>
   </div>
-  <div class="grid-2" style="margin-bottom:40px;">
-    <div class="card">
-      <div class="chart-container tall"><canvas id="t2pChart"></canvas></div>
+
+  <!-- Big quadrant chart -->
+  <div class="card" style="margin-bottom:32px;">
+    <div class="card-eyebrow">Pattern · cost-quality misallocation</div>
+    <div class="chart-container quadrant-chart"><canvas id="quadrantChart"></canvas></div>
+    <div style="font-size:11.5px;color:var(--ink2);margin-top:10px;line-height:1.5;">
+      Two extreme outliers excluded from this chart: <strong>Influencer Youtube</strong> (€6,540 CAC) and <strong>Partnership Ads</strong> (zero conversions). Both kept the axis from being readable. They are reported in the strip below.
     </div>
-    <div class="card card-lavender">
-      <div class="card-eyebrow">Pattern · What the data shows</div>
-      <div style="display:flex;flex-direction:column;gap:18px;margin-top:16px;">
-        <div>
-          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Influencer IG sends the highest-quality users.</div>
-          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">29% of Influencer IG trials convert to paid — compared to 21% for TikTok Ads and {{ d.markets[2].t2p_pct }}% for the English-language audience average. That means 8–11% more paying customers for the same number of trial starts.</div>
-        </div>
-        <div>
-          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Paid social underperforms organic on quality.</div>
-          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">Direct, Word of Mouth, and PR all beat Meta, TikTok, and Google on trial-to-paid. Organic intent converts more reliably than paid intent.</div>
-        </div>
-        <div>
-          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Anomaly · TikTok was the wrong audience.</div>
-          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">20.6% trial-to-paid at €70 CAC. The channel was paused after September. This data confirms the pause was the right call.</div>
-        </div>
-        <div>
-          <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px;">Anomaly · The English-language audience has the lowest trial-to-paid rate.</div>
-          <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;">{{ d.markets[2].t2p_pct }}% — the lowest across all language groups. Possible causes include payment method coverage, content depth, or paywall friction, but funnel-stage data is needed to confirm the source of the drop-off.</div>
-        </div>
+  </div>
+
+  <!-- Quadrant explainer -->
+  <div class="quadrant-grid">
+    <div class="quadrant-card q-tl">
+      <div class="quadrant-coord">↖ low CAC · high t2p</div>
+      <div class="quadrant-title">{{ q_labels.efficient_high_quality }}</div>
+      <p class="quadrant-meaning">Below-median cost <em>and</em> above-median conversion. Every euro here works twice — cheap to acquire and the trials actually pay. The most under-invested quadrant in the dataset.</p>
+      <div class="quadrant-channels">
+        {% for c in channels_in.efficient_high_quality %}<span>{{ c.channel }}</span>{% endfor %}
+      </div>
+    </div>
+    <div class="quadrant-card q-tr">
+      <div class="quadrant-coord">↗ high CAC · high t2p</div>
+      <div class="quadrant-title">{{ q_labels.premium }}</div>
+      <p class="quadrant-meaning">Trials convert at acceptable rates, but each one costs more than the median. Defensible only if revenue per subscriber justifies the premium — and only if there is no cheaper, equally-converting alternative.</p>
+      <div class="quadrant-channels">
+        {% for c in channels_in.premium %}<span>{{ c.channel }}</span>{% endfor %}
+      </div>
+    </div>
+    <div class="quadrant-card q-bl">
+      <div class="quadrant-coord">↙ low CAC · low t2p</div>
+      <div class="quadrant-title">{{ q_labels.cheap_moderate }}</div>
+      <p class="quadrant-meaning">Below-median cost but trials convert at below-median rates. A volume play — useful for cheap reach and audience testing, not a quality engine.</p>
+      <div class="quadrant-channels">
+        {% for c in channels_in.cheap_moderate %}<span>{{ c.channel }}</span>{% endfor %}
+      </div>
+    </div>
+    <div class="quadrant-card q-br">
+      <div class="quadrant-coord">↘ high CAC · low t2p</div>
+      <div class="quadrant-title">{{ q_labels.wasted_spend }}</div>
+      <p class="quadrant-meaning">Above-median cost <em>and</em> below-median quality. Money goes in, fewer paying customers come out than from any other quadrant. The only correct response is pause or kill.</p>
+      <div class="quadrant-channels">
+        {% for c in channels_in.wasted_spend %}<span>{{ c.channel }}</span>{% endfor %}
       </div>
     </div>
   </div>
 
-  <!-- Markets -->
-  <div class="section-head" style="margin-bottom:20px;">
-    <h2>Pattern · Three language groups, <em>three different</em> stories</h2>
-    <div class="section-sub">The same channel mix produces very different results across language audiences — that's a signal worth investigating.</div>
+  <!-- Outliers -->
+  <div class="section-head" style="margin-top:48px;">
+    <h2>Outliers · <em>three channels</em> that don't fit any pattern</h2>
+    <div class="section-sub">A pattern reveals the rule. Outliers reveal where the rule breaks. Three named extremes inside the chart, plus two too extreme to plot.</div>
   </div>
 
-  <!-- Trial-to-paid per market summary -->
-  <div class="t2p-market-strip">
-    {% set max_t2p = d.markets | map(attribute='t2p_pct') | max %}
-    {% for mk in d.markets %}
-    {% set flags = {'de': '🇩🇪', 'fr': '🇫🇷', 'en': '🇬🇧'} %}
-    <div class="t2p-market-bar">
-      <div class="t2p-market-label">
-        <span>{{ 'German-speaking' if mk.name == 'German' else ('French-speaking' if mk.name == 'French' else 'English-speaking') }}</span>
-        <strong class="t2p-market-pct t2p-{{ mk.code }}">{{ mk.t2p_pct }}%</strong>
-      </div>
-      <div class="t2p-track">
-        <div class="t2p-fill t2p-fill-{{ mk.code }}" style="width: {{ (mk.t2p_pct / 35 * 100) | round(1) }}%"></div>
-      </div>
-      <div class="t2p-market-note">{{ mk.t2p_pct }}% of yearly trials convert to paying subscribers</div>
-    </div>
-    {% endfor %}
-    <div class="t2p-market-callout">
-      The English-language audience converts <strong>{{ "%.0f"|format(d.markets[0].t2p_pct - d.markets[2].t2p_pct) }} percentage points fewer</strong> trials than the German-language audience — on a similar CAC (€{{ d.markets[2].cac }} vs €{{ d.markets[0].cac }}). Fixing the English-language funnel would yield more paying subscribers without any additional spend.
-    </div>
-  </div>
+  {% set big = q.spotlight_outliers.biggest_spender %}
+  {% set cheap = q.spotlight_outliers.cheapest_cac %}
+  {% set waste = q.spotlight_outliers.wasted_spend %}
   <div class="grid-3">
-    {% set verdicts = {'de': 'Flagship', 'fr': 'Optimize', 'en': 'Fix Funnel'} %}
-    {% set stories = {
-      'de': 'The engine. Best CAC across all language groups, and the only audience where ROAS exceeds 1.0×. Google Ads in the German-language segment returns exceptionally high — the strongest signal in the dataset.',
-      'fr': 'Healthy intent — highest trial-to-paid rate and highest revenue per conversion — but expensive to reach: ~44% higher CAC than the German-language audience. Coupon usage is highest here; the pricing and promotion strategy needs review.',
-      'en': 'Trial-to-paid is ~10 percentage points below the other language groups. This may indicate a product, onboarding, or payment issue — but the dataset lacks funnel-stage data (impressions → clicks → trial starts) needed to confirm where the drop-off occurs. Scaling spend should be approached cautiously until the root cause is understood.'
-    } %}
-    {% for mk in d.markets %}
-    <div class="market-card {{ mk.code }}">
-      <div class="market-name">{{ 'German-speaking' if mk.name == 'German' else ('French-speaking' if mk.name == 'French' else 'English-speaking') }}</div>
-      <div class="market-verdict">{{ verdicts[mk.code] }}</div>
-      <div class="market-metrics">
-        <div class="market-metric">
-          <div class="metric-val">{% if mk.spend >= 1e6 %}€{{ "%.2f"|format(mk.spend/1e6) }}M{% else %}€{{ "%.0f"|format(mk.spend/1000) }}k{% endif %}</div>
-          <div class="metric-label">Spend</div>
+    <div class="card outlier-card outlier-warn">
+      <div class="card-eyebrow">Outlier · spend concentration</div>
+      <div class="outlier-channel">{{ big.channel }}</div>
+      <div class="outlier-metric">{{ "%.1f"|format(big.spend_share_pct) }}% of paid budget</div>
+      <p class="outlier-body">€{{ "%.2f"|format(big.spend / 1e6) }}M concentrated in a single channel — at €{{ "%.2f"|format(big.cac) }} CAC and {{ big.t2p_pct }}% trial-to-paid, just barely above the median for quality. The dependency itself is the risk: when six of every ten paid euros run through one platform, every CPM rise on Meta hits the entire P&L.</p>
+    </div>
+    <div class="card outlier-card outlier-good">
+      <div class="card-eyebrow">Outlier · cost efficiency</div>
+      <div class="outlier-channel">{{ cheap.channel }}</div>
+      <div class="outlier-metric">€{{ "%.2f"|format(cheap.cac) }} CAC · {{ cheap.t2p_pct }}% t2p</div>
+      <p class="outlier-body">{{ "%.0f"|format(q.median_cac / cheap.cac) }}× cheaper than the median paid channel and converts trials better than most. The catch: only €{{ "{:,.0f}".format(cheap.spend) }} in total spend ({{ "%.2f"|format(cheap.spend_share_pct) }}% of paid budget). Proven format, dramatically under-funded — the clearest "scale me" signal in the dataset.</p>
+    </div>
+    <div class="card outlier-card outlier-bad">
+      <div class="card-eyebrow">Outlier · the reason a pause was right</div>
+      <div class="outlier-channel">{{ waste.channel }}</div>
+      <div class="outlier-metric">€{{ "%.2f"|format(waste.cac) }} CAC · {{ waste.t2p_pct }}% t2p</div>
+      <p class="outlier-body">The only paid channel sitting in the wasted-spend quadrant — above-median cost <em>and</em> below-median quality. €{{ "%.0f"|format(waste.spend / 1000) }}k spent through September before the pause. The chart confirms the call was correct, and that no future activation should resume without a fundamentally different audience or creative.</p>
+    </div>
+  </div>
+
+  <!-- Excluded extremes -->
+  <div class="extreme-outlier-strip">
+    <div class="extreme-outlier-head">⚠ Two channels excluded from the scatter — too extreme to plot without distorting the axes</div>
+    <div class="extreme-outlier-list">
+      {% for o in q.excluded_outliers %}
+      <div class="extreme-outlier-row">
+        <div class="extreme-outlier-name">{{ o.channel }}</div>
+        <div class="extreme-outlier-stats">
+          €{{ "{:,.0f}".format(o.spend) }} spent
+          {% if o.cac %}· €{{ "{:,.0f}".format(o.cac) }} CAC{% else %}· no conversions{% endif %}
+          · {{ "{:,.0f}".format(o.paid_conversions) }} paid conversion{{ '' if o.paid_conversions == 1 else 's' }}
         </div>
-        <div class="market-metric">
-          <div class="metric-val {{ 'good' if mk.cac < 38 else ('bad' if mk.cac > 45 else '') }}">€{{ "%.2f"|format(mk.cac) }}</div>
-          <div class="metric-label">CAC</div>
-        </div>
-        <div class="market-metric">
-          <div class="metric-val {{ 'good' if mk.roas >= 1.0 else 'bad' }}">{{ "%.2f"|format(mk.roas) }}×</div>
-          <div class="metric-label">ROAS</div>
-        </div>
-        <div class="market-metric">
-          <div class="metric-val">{% if mk.subs >= 1000 %}{{ "%.0f"|format(mk.subs/1000) }}k{% else %}{{ mk.subs }}{% endif %}</div>
-          <div class="metric-label">Subscribers</div>
-        </div>
-        <div class="market-metric">
-          <div class="metric-val {{ 'good' if mk.t2p_pct >= 25 else ('bad' if mk.t2p_pct < 20 else '') }}">{{ mk.t2p_pct }}%</div>
-          <div class="metric-label">Trial → Paid</div>
-        </div>
-        <div class="market-metric">
-          <div class="metric-val {{ 'good' if mk.arpu >= 12 else ('bad' if mk.arpu < 10 else '') }}">€{{ "%.2f"|format(mk.arpu) }}</div>
-          <div class="metric-label">Revenue / Conv.</div>
+        <div class="extreme-outlier-note">
+          {% if o.channel == 'Influencer Youtube' %}A single paid conversion across the entire year cost €6,540 — three orders of magnitude above any other paid channel. Verdict in the channel P&L: Kill.{% endif %}
+          {% if o.channel == 'Partnership Ads' %}€3,771 spent across the year produced zero tracked paid conversions. Either the channel does not work, or the tracking is broken — both fail equally for budget purposes. Verdict: Kill.{% endif %}
         </div>
       </div>
-      <div class="market-story">{{ stories[mk.code] }}</div>
+      {% endfor %}
     </div>
-    {% endfor %}
+  </div>
+
+  <!-- Synthesis -->
+  <div class="card card-lavender" style="margin-top:32px;">
+    <div class="card-eyebrow">Implication</div>
+    <p style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:var(--ink);line-height:1.55;margin:6px 0 0 0;">
+      <strong>The pattern:</strong> spend is concentrated in the <em>premium</em> quadrant — one channel costing more than the median to acquire trials of just-average quality. The <em>efficient + high-quality</em> quadrant — where every euro should multiply — is occupied almost entirely by a single under-funded channel.<br><br>
+      <strong>The implication:</strong> the next million should not go where the existing million already lives. It should fund the under-invested quadrant, not the dominant one.
+    </p>
   </div>
 </section>
 
@@ -535,6 +559,11 @@
           <td><code>Share Coupon Used</code><br><code>Share Student Coupon Used</code></td>
           <td>"Share" is a financial term (equity stake) and a social media term. Here it means "proportion" or "rate." Ambiguous to anyone reading the schema cold.</td>
           <td><code>coupon_usage_rate</code>, <code>student_coupon_usage_rate</code></td>
+        </tr>
+        <tr>
+          <td><code>Market</code></td>
+          <td>Ambiguous label. Values like <code>French</code>, <code>German</code>, and <code>English</code> could describe a geographic market or a language segment. The data appears to mean language, not country.</td>
+          <td><code>language_market</code> or <code>customer_language</code></td>
         </tr>
         <tr>
           <td><code>New Revenue Create Date</code><br><code>New Revenue Invoice Date</code></td>

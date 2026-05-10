@@ -141,8 +141,8 @@ Each script answers one of the five questions from the brief. They all follow th
 **What it does:** Reads `window.DASHBOARD` (embedded JSON) and initialises three Chart.js charts.
 
 **Key things to read:**
-- The three canvas IDs: `efficiencyChart`, `metaChart`, `t2pChart` — match the `<canvas>` elements in the template
-- The colour mapping in `t2pChart` — `paid_good` (green), `paid` (coral), `paid_warn` (amber), `organic` (purple) — set in `dashboard_data.py`'s `_verdict` logic
+- The three canvas IDs: `efficiencyChart`, `metaChart`, `quadrantChart` — match the `<canvas>` elements in the template
+- The Q4 `quadrantChart` is a Chart.js bubble chart with two custom plugins: `quadrantBackdrop` (paints the four quadrant background tints, draws the median CAC + median t2p reference lines, and renders the corner labels) and `channelLabels` (places the channel name next to each bubble). Bubble radius is `sqrt(spend / max_spend)` so spend differences read as area, not linear.
 
 ---
 

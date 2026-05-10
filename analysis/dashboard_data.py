@@ -173,22 +173,84 @@ def run(df_full, df_conv):
             "verdict": v,
         })
 
-    # Trial-to-paid chart: all channels with t2p, sorted desc, exclude very-low-volume.
-    # Two categories only: paid media vs organic/earned — matches the narrative.
-    PAID_CHANNELS = {
-        "Facebook/Instagram Ads", "Google Ads",
-        "Influencer Instagram", "Influencer Podcast",
-        "TikTok Ads", "Youtube Ads",
+    # ── Q4 quadrant scatter: cost (CAC) vs quality (trial-to-paid) ──────────
+    # Includes only channels with real paid spend AND enough trial volume to
+    # compute t2p reliably. Two extreme outliers are excluded from the scatter
+    # and reported separately (axis would be unreadable otherwise).
+    EXTREME_OUTLIER_CHANNELS = {
+        "Influencer Youtube",   # €6,540 CAC — 1 paid conversion all year
+        "Partnership Ads",      # €3,771 spent, 0 conversions
     }
-    t2p_data = []
-    for _, r in ch_agg[(ch_agg["yc"] >= 50) & ch_agg["t2p_pct"].notna()].sort_values("t2p_pct", ascending=False).iterrows():
-        ch = r["channel"]
-        cat = "paid" if ch in PAID_CHANNELS else "organic"
-        t2p_data.append({
-            "channel": ch,
+    MIN_TRIALS_FOR_T2P = 50
+
+    quadrant_pool = ch_agg[
+        (ch_agg["spend"] > 0)
+        & ch_agg["cac"].notna()
+        & ch_agg["t2p_pct"].notna()
+        & (ch_agg["yc"] >= MIN_TRIALS_FOR_T2P)
+        & (~ch_agg["channel"].isin(EXTREME_OUTLIER_CHANNELS))
+    ].copy()
+
+    median_cac = float(quadrant_pool["cac"].median())
+    median_t2p = float(quadrant_pool["t2p_pct"].median())
+
+    def _quadrant(cac, t2p):
+        # Inclusive on the upper side of each axis (median goes to "good" half).
+        if cac <= median_cac and t2p >= median_t2p:
+            return "efficient_high_quality"
+        if cac > median_cac and t2p >= median_t2p:
+            return "premium"
+        if cac <= median_cac and t2p < median_t2p:
+            return "cheap_moderate"
+        return "wasted_spend"
+
+    quadrant_points = []
+    for _, r in quadrant_pool.sort_values("spend", ascending=False).iterrows():
+        quadrant_points.append({
+            "channel": r["channel"],
+            "cac": float(r["cac"]),
             "t2p_pct": float(r["t2p_pct"]),
-            "category": cat,
+            "spend": float(r["spend"]),
+            "spend_share_pct": float(r["spend_share_pct"]),
+            "quadrant": _quadrant(float(r["cac"]), float(r["t2p_pct"])),
         })
+
+    # Excluded extreme outliers — surfaced in narrative, not on scatter.
+    excluded_outliers = []
+    for ch_name in EXTREME_OUTLIER_CHANNELS:
+        sub = ch_agg[ch_agg["channel"] == ch_name]
+        if not len(sub):
+            continue
+        r = sub.iloc[0]
+        excluded_outliers.append({
+            "channel": ch_name,
+            "spend": float(r["spend"]),
+            "paid_conversions": float(r["paid"]),
+            "cac": float(r["cac"]) if r["cac"] is not None else None,
+            "t2p_pct": float(r["t2p_pct"]) if r["t2p_pct"] is not None else None,
+        })
+
+    # Spotlight outliers among the in-chart points: dataset extremes worth naming.
+    # Ranked deterministically — biggest spender, cheapest CAC, only-bottom-right.
+    spotlight_outliers = []
+    if quadrant_points:
+        biggest_spender = max(quadrant_points, key=lambda p: p["spend"])
+        cheapest = min(quadrant_points, key=lambda p: p["cac"])
+        wasted = [p for p in quadrant_points if p["quadrant"] == "wasted_spend"]
+        spotlight_outliers = {
+            "biggest_spender": biggest_spender,
+            "cheapest_cac": cheapest,
+            "wasted_spend": wasted[0] if wasted else None,
+        }
+
+    quadrant_block = {
+        "median_cac": round(median_cac, 2),
+        "median_t2p_pct": round(median_t2p, 2),
+        "points": quadrant_points,
+        "excluded_outliers": excluded_outliers,
+        "spotlight_outliers": spotlight_outliers,
+        "total_paid_spend": float(paid_total_spend),
+    }
 
     # ── Markets ──────────────────────────────────────────────────────────────
     market_df = df[df["Market"].isin(["German", "French", "English"])]
@@ -257,7 +319,7 @@ def run(df_full, df_conv):
             "dec_cac": meta_dec_cac,
         },
         "channels": channel_cards,
-        "trial_to_paid": t2p_data,
+        "q4_quadrant": quadrant_block,
         "markets": markets,
     }
 
