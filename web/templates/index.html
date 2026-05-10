@@ -44,7 +44,7 @@
   <div class="eyebrow">Senior Data Analyst Case Study · 2024</div>
   <h1>We spent <em>€{{ "%.2f"|format(k.total_spend/1e6) }}M</em> in 2024.<br>Here's where the next million should go.</h1>
   <p class="hero-sub">
-    Five questions from the brief — answered with data. Spend grew <strong>{{ ef.spend_growth_pct }}%</strong> while paid conversions grew only <strong>{{ ef.conv_growth_pct }}%</strong>. The analysis below explains why, and what to do about it.
+    Spend grew <strong>{{ ef.spend_growth_pct }}%</strong> while paid conversions grew only <strong>{{ ef.conv_growth_pct }}%</strong>. The analysis below explains why, and what to do about it.
   </p>
 </section>
 
@@ -367,6 +367,35 @@
         <div class="realloc-row"><span>Implementation timeline</span><strong>90 days</strong></div>
       </div>
       <div style="font-size:11px;color:var(--purple);font-style:italic;margin-top:24px;line-height:1.5;">Model assumes constant marginal CAC. Influencer IG capacity capped at +60% to avoid diminishing returns.</div>
+    </div>
+  </div>
+
+  <!-- Methodology & evidence — answers brief part 2: "What evidence from the data supports your reasoning?" -->
+  <div class="card" style="margin-top:24px;">
+    <div class="card-eyebrow">How the table was built · evidence from the data</div>
+    <div class="grid-2" style="gap:32px;margin-top:14px;font-size:13px;line-height:1.6;color:var(--ink2);">
+      <div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">The row formula</div>
+        <p style="margin:0 0 10px 0;"><strong>ΔConversions = ΔSpend ÷ that channel's observed 2024 CAC.</strong> The CACs are the same full-year figures from the channel P&amp;L above — every value is hand-verified by the unit-test suite (<code style="font-size:12px;">tests/test_metrics.py</code>).</p>
+        <ul style="margin:0;padding-left:18px;">
+          <li>Meta · −€1.31M ÷ €68.97 = <strong>−19,000</strong></li>
+          <li>Influencer IG · +€701k ÷ €37.35 = <strong>+18,750</strong></li>
+          <li>Google Ads · +€525k ÷ €9.71 = <strong>+54,070</strong></li>
+          <li>Influencer Podcast · +€247k ÷ €2.85 ≈ +87k naive, reported <strong>+25k–49k</strong> after a haircut for the 93× scale jump</li>
+          <li>TikTok · −€447k ÷ €69.99 = <strong>−6,400</strong></li>
+          <li>Test budget · €298k at ~€40 blended = <strong>+7,500</strong></li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">What in the data justifies each move</div>
+        <ul style="margin:0;padding-left:18px;">
+          <li><strong>Scale Influencer Podcast &amp; Google Ads</strong> — they post the highest paid-channel ROAS in 2024 (15.17× and 3.80×) at the lowest CACs (€2.85 and €9.71). They are starved of budget at 0.05% and 1.3% of paid spend.</li>
+          <li><strong>Cut Meta</strong> — €3.71M at 0.52× ROAS, with monthly CAC inflating <strong>+49% Jan→Dec</strong> (€60 → €90). The trend says the next euro is worse than the last; scaling makes the ratio worse, not better.</li>
+          <li><strong>Kill TikTok</strong> — the only paid channel sitting in the wasted-spend quadrant of Q4 (above-median CAC <em>and</em> below-median trial-to-paid: €69.99 / 20.6%). Already paused after September; the data confirms the call.</li>
+          <li><strong>Cap Influencer IG at +41%</strong> — within the +60% capacity guardrail, so the optimizer cannot dump all freed budget into a single channel.</li>
+        </ul>
+        <p style="margin:14px 0 0 0;font-size:12px;color:var(--ink3);font-style:italic;">The one assumption — constant marginal CAC — is flagged as a data gap (Q5). It is why the recommendation pairs this rebalance with an incrementality test rather than executing it standalone.</p>
+      </div>
     </div>
   </div>
 </section>
