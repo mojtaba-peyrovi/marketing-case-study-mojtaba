@@ -151,12 +151,23 @@ def test_coupon_share_in_range():
 
 # ── Q4 quadrant tests (cost vs quality scatter) ───────────────────────────────
 
+_QUADRANT_CACHE = None
+
 def _load_quadrant():
-    """Load the q4_quadrant block from the generated dashboard.json."""
-    import json
-    path = os.path.join(os.path.dirname(__file__), "..", "output", "data", "dashboard.json")
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)["q4_quadrant"]
+    """Build the q4_quadrant block by running the dashboard pipeline against
+    the real dataset. Self-contained — does not depend on prior `generate_all.py`
+    execution, so it works as the first step in a Docker build.
+    """
+    global _QUADRANT_CACHE
+    if _QUADRANT_CACHE is not None:
+        return _QUADRANT_CACHE
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "analysis"))
+    from data_loader import load_data
+    import dashboard_data
+    df_full, df_conv = load_data()
+    result = dashboard_data.run(df_full, df_conv)
+    _QUADRANT_CACHE = result["q4_quadrant"]
+    return _QUADRANT_CACHE
 
 
 def test_q4_medians_match_hand_computed():
