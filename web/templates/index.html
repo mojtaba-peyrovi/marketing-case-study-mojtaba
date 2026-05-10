@@ -808,7 +808,7 @@
       <li><strong>Fix the Youtube Ads/Google Ads mapping</strong> at the source — either split YT spend out of Google Ads invoices or remap "Youtube Ads" conversions under "Google Ads" consistently across the warehouse.</li>
       <li><strong>Tag known non-cash channels</strong> (barter podcasts, gifted influencer episodes) explicitly so future analysis can distinguish "no spend" from "spend missing".</li>
       <li><strong>Until fixes ship</strong>: report English ROAS only at the Facebook/IG channel level, and flag the market in dashboards as "partial coverage". Use German + French for any cross-market comparison.</li>
-      <li><strong>Add a CI check to the data pipeline</strong>: any row with <code>Conversion Channel 1 = Paid</code> AND <code>Marketing Spendings = 0</code> AND <code>Revenue &gt; 0</code> should raise a warning to the data team.</li>
+      <li><strong>Add a CI check to the data pipeline</strong>: any row with <code>Conversion Channel 1 = Paid</code> AND <code>Marketing Spendings = 0</code> AND <code>Revenue &gt; 0</code> should raise a warning to the data team <em>(added already)</em>.</li>
     </ol>
   </div>
   {% endif %}
@@ -871,6 +871,7 @@
           <li>Coupon usage shares between 0% and 100%</li>
           <li>Yearly Paid Conversions never exceed Yearly Conversions</li>
           <li>No completely empty rows</li>
+          <li>Spend-tracking integrity — warns on Paid rows with €0 spend but &gt; €0 revenue (catches the English-market gap automatically)</li>
         </ul>
       </div>
     </div>

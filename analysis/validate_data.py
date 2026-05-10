@@ -15,6 +15,7 @@ Checks performed:
   6. Coupon usage shares between 0 and 1 (i.e. 0% – 100%)
   7. Yearly Paid Conversions never exceed Yearly Conversions
   8. No completely empty rows
+  9. Spend-tracking integrity: warn on Paid rows with 0 spend but >0 revenue
 
 Usage:
     from validate_data import validate
@@ -130,6 +131,30 @@ def validate(df: pd.DataFrame) -> None:
         errors.append(
             f"{all_null} row(s) have null values in all key numeric columns. "
             "These rows would produce no useful output."
+        )
+
+    # 9. Spend-tracking integrity (warning, not error).
+    # A row tagged Paid that booked revenue but recorded no spend is almost
+    # always a tracking gap (ad account not connected to the spend ETL, or
+    # channel-naming mismatch between conversions and spend feeds). Warn so
+    # the data team can investigate; do not fail the build.
+    integrity_mask = (
+        (df["Conversion Channel 1"] == "Paid") &
+        (df["Marketing Spendings"] == 0) &
+        (df["New Revenue Invoice Date"].fillna(0) > 0)
+    )
+    if integrity_mask.sum() > 0:
+        bad_rows = df.loc[integrity_mask, [
+            "Business Month", "Market", "Conversion Channel 3",
+            "Marketing Spendings", "New Revenue Invoice Date"
+        ]]
+        by_market = bad_rows.groupby("Market").size().to_dict()
+        print(
+            f"\n  [WARNING] {int(integrity_mask.sum())} row(s) tagged Conversion Channel 1 = "
+            f"'Paid' have Marketing Spendings = 0 but New Revenue Invoice Date > 0. "
+            f"This indicates a spend-tracking gap (revenue booked without a matching spend). "
+            f"Breakdown by market: {by_market}. "
+            f"Notify the data team to audit the ad-account / channel-3 join in the spend ETL.\n"
         )
 
     if errors:
