@@ -23,6 +23,88 @@ sys.path.insert(0, os.path.dirname(__file__))
 OUTPUT_DATA = os.path.join(os.path.dirname(__file__), "..", "output", "data")
 
 
+def _spend_tracking_integrity(df_full):
+    """
+    Investigates the 434 rows where Conversion Channel 1 = 'Paid' but
+    Marketing Spendings = 0. Splits them into:
+      A) placeholder rows (zero everything — every market/month/channel scaffold)
+      B) live rows with conversions/revenue but no spend booked — the integrity issue.
+
+    Returns a dict with:
+      - headline numbers
+      - per-market summary (untracked-revenue %)
+      - per-(market, channel) breakdown of how many active months are missing spend
+    """
+    df = df_full.copy()
+    paid_zero = (df["Conversion Channel 1"] == "Paid") & (df["Marketing Spendings"] == 0)
+
+    # A) placeholder rows: 0 spend, 0 subs, 0 conv, 0 rev
+    has_activity = (
+        (df["Subscriber"].fillna(0) > 0) |
+        (df["Monthly Conversions"].fillna(0) > 0) |
+        (df["Yearly Conversions"].fillna(0) > 0) |
+        (df["New Revenue Invoice Date"].fillna(0) > 0)
+    )
+    placeholder_rows = int((paid_zero & ~has_activity).sum())
+    integrity_rows = int((paid_zero & has_activity).sum())
+
+    # Per-market summary (known markets only)
+    known = df[df["Market"].isin(["English", "French", "German"])]
+    market_summary = []
+    for m in ["English", "French", "German"]:
+        md = known[known["Market"] == m]
+        rev = float(md["New Revenue Invoice Date"].fillna(0).sum())
+        spend = float(md["Marketing Spendings"].sum())
+        rev_no_spend = float(
+            md.loc[md["Marketing Spendings"] == 0, "New Revenue Invoice Date"].fillna(0).sum()
+        )
+        market_summary.append({
+            "market": m,
+            "total_revenue": int(rev),
+            "total_spend": int(spend),
+            "revenue_with_no_spend": int(rev_no_spend),
+            "pct_revenue_untracked": round(rev_no_spend / rev * 100, 1) if rev else None,
+            "reported_roas": round(rev / spend, 2) if spend else None,
+        })
+
+    # Per (market, channel) breakdown — only Paid rows that had real activity
+    paid_active = known[(known["Conversion Channel 1"] == "Paid") & has_activity.loc[known.index]]
+    g = (
+        paid_active
+        .groupby(["Market", "Conversion Channel 3"])
+        .agg(
+            months_with_activity=("Marketing Spendings", "size"),
+            months_with_spend=("Marketing Spendings", lambda s: int((s > 0).sum())),
+            revenue=("New Revenue Invoice Date", lambda s: int(s.fillna(0).sum())),
+            spend=("Marketing Spendings", lambda s: int(s.sum())),
+        )
+        .reset_index()
+    )
+    g["months_missing_spend"] = g["months_with_activity"] - g["months_with_spend"]
+    g = g[g["months_missing_spend"] > 0].sort_values(
+        ["Market", "months_missing_spend"], ascending=[True, False]
+    )
+    channel_breakdown = [
+        {
+            "market": r["Market"],
+            "channel": r["Conversion Channel 3"],
+            "months_with_activity": int(r["months_with_activity"]),
+            "months_with_spend": int(r["months_with_spend"]),
+            "months_missing_spend": int(r["months_missing_spend"]),
+            "revenue": int(r["revenue"]),
+            "spend": int(r["spend"]),
+        }
+        for _, r in g.iterrows()
+    ]
+
+    return {
+        "placeholder_rows": placeholder_rows,
+        "integrity_rows": integrity_rows,
+        "market_summary": market_summary,
+        "channel_breakdown": channel_breakdown,
+    }
+
+
 def run(df_full, df_conv):
     os.makedirs(OUTPUT_DATA, exist_ok=True)
 
@@ -44,8 +126,17 @@ def run(df_full, df_conv):
     unknown_ch1 = int((df_full["Conversion Channel 1"] == "UNKNOWN").sum())
     unknown_ch3 = int((df_full["Conversion Channel 3"].str.strip() == "UNKNOWN").sum())
 
+    # ── Spend tracking integrity (the 0-spend Paid rows finding) ─────────────
+    spend_tracking = _spend_tracking_integrity(df_full)
+
     # ── Structural data gaps ──────────────────────────────────────────────────
     gaps = [
+        {
+            "gap": "Spend-tracking gap: 64% of English-market revenue has no spend recorded",
+            "impact": "Across 119 active rows, conversions and revenue are booked against Paid channels (Google, TikTok, IG-Influencer, Podcast) with zero matching spend. The English market is hit hardest — its reported ROAS and CAC are unreliable and cannot be compared against German/French until fixed.",
+            "suggested_data_source": "Audit the marketing-spend ETL: confirm all English-market ad accounts (Google Ads, TikTok Ads Manager, Meta IG-Influencer line items) are connected and that spend rows are joined to the same channel-3 keys used for conversions. Also check whether 'Youtube Ads' spend is being booked under 'Google Ads' at source.",
+            "priority": "Critical",
+        },
         {
             "gap": "No Customer Lifetime Value (LTV) data",
             "impact": "Cannot calculate LTV:CAC ratio — the gold-standard metric for sustainable growth. Without LTV, budget decisions are based on acquisition cost alone, ignoring long-term value.",
@@ -119,6 +210,7 @@ def run(df_full, df_conv):
             },
         },
         "data_gaps": gaps,
+        "spend_tracking_integrity": spend_tracking,
     }
 
     out_path = os.path.join(OUTPUT_DATA, "data_gaps.json")

@@ -209,7 +209,6 @@
       </div>
       <div style="height:1px;background:var(--coral);margin:0 0 16px;"></div>
       <div style="font-size:13px;color:var(--ink);font-weight:600;margin-bottom:4px;">Q4 CAC: €{{ ef.q4_cac }} (+{{ ef.cac_inflation_pct }}% vs Q1)</div>
-      <div style="font-size:13px;color:var(--ink2);">Q4 revenue per €1 spent: {{ ef.q4_roas }}× (Q1 was {{ ef.q1_roas }}×)</div>
     </div>
   </div>
 
@@ -225,7 +224,7 @@
         <div class="card-title" style="margin-bottom: 16px;">Stop the bleeding</div>
         <div class="card-body" style="margin-bottom: 16px;">
           <div style="margin-bottom: 8px;">• Cap Meta spend at Sept levels (~€350k/mo)</div>
-          <div style="margin-bottom: 8px;">• Kill Influencer YouTube + Partnership Ads (€10k for 1 conversion)</div>
+          <div style="margin-bottom: 8px;">• Kill Influencer YouTube (€6.5k → 1 paid conv.) and Partnership Ads (€3.8k → 0 paid conv.)</div>
           <div>• Confirm TikTok pause is permanent</div>
         </div>
         <div style="border-top:1px solid var(--divider);padding-top:14px;">
@@ -697,6 +696,122 @@
     <h2>What data we <em>don't have</em> — and why it matters</h2>
     <div class="section-sub">Every gap below limits the precision of at least one recommendation above.</div>
   </div>
+
+  {% set sti = gaps.spend_tracking_integrity %}
+  {% if sti %}
+  <div class="table-wrap" style="margin-bottom:40px;border:2px solid #c54646;border-radius:8px;padding:24px;background:#fff8f6;">
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;color:#c54646;margin-bottom:6px;">
+      ⚠ Spend-tracking integrity issue — English-market ROAS is unreliable
+    </div>
+    <div style="font-size:14px;color:#444;margin-bottom:18px;line-height:1.55;">
+      The dataset has <strong>434 rows</strong> where <em>Conversion Channel 1 = "Paid"</em> but
+      <em>Marketing Spendings = 0</em>. They split into two distinct stories:
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+      <div style="background:#fff;border:1px solid #e6d6cf;border-radius:6px;padding:14px;">
+        <div style="font-weight:600;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">A · Benign placeholders</div>
+        <div style="font-size:28px;font-family:'Fraunces',Georgia,serif;font-weight:600;color:var(--ink);">{{ sti.placeholder_rows }} rows</div>
+        <div style="font-size:13px;color:#555;margin-top:6px;line-height:1.5;">
+          Zero spend, zero subscribers, zero conversions, zero revenue. Pre-created scaffolding for every market × month × channel combo, even when the channel didn't run. Excluded from ROAS — no impact.
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #c54646;border-radius:6px;padding:14px;">
+        <div style="font-weight:600;color:#c54646;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">B · Real integrity problem</div>
+        <div style="font-size:28px;font-family:'Fraunces',Georgia,serif;font-weight:600;color:#c54646;">{{ sti.integrity_rows }} rows</div>
+        <div style="font-size:13px;color:#555;margin-top:6px;line-height:1.5;">
+          Real conversions and revenue are landing, but no spend was logged against them. These rows distort every market- and channel-level ROAS calculation downstream.
+        </div>
+      </div>
+    </div>
+
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;color:var(--ink);margin-bottom:8px;">
+      How much revenue lacks a matching spend, by market
+    </div>
+    <table style="width:100%;font-size:13.5px;margin-bottom:18px;">
+      <thead>
+        <tr>
+          <th style="text-align:left;">Market</th>
+          <th style="text-align:right;">Total revenue</th>
+          <th style="text-align:right;">Total spend</th>
+          <th style="text-align:right;">Revenue with <strong>no spend recorded</strong></th>
+          <th style="text-align:right;">% of revenue untracked</th>
+          <th style="text-align:right;">Reported ROAS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in sti.market_summary %}
+        <tr {% if r.market == 'English' %}style="background:#fff0ec;"{% endif %}>
+          <td><strong>{{ r.market }}</strong>{% if r.market == 'English' %} <span style="color:#c54646;">←  most affected</span>{% endif %}</td>
+          <td style="text-align:right;">€{{ "{:,}".format(r.total_revenue) }}</td>
+          <td style="text-align:right;">€{{ "{:,}".format(r.total_spend) }}</td>
+          <td style="text-align:right;color:#c54646;"><strong>€{{ "{:,}".format(r.revenue_with_no_spend) }}</strong></td>
+          <td style="text-align:right;{% if r.market == 'English' %}color:#c54646;font-weight:600;{% endif %}">{{ r.pct_revenue_untracked }}%</td>
+          <td style="text-align:right;">{{ r.reported_roas }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div style="font-size:13px;color:#666;margin-bottom:24px;line-height:1.55;">
+      <strong>Why this proves a tracking issue (not a real channel):</strong> if Paid revenue without spend were rare or random, we'd expect a similar untracked-revenue rate across all three markets. Instead, English's rate is <strong>almost double</strong> French's and German's. This is a <em>systematic</em> failure concentrated in one market, not noise.
+    </div>
+
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;color:var(--ink);margin-bottom:8px;">
+      Where the spend is missing, channel by channel
+    </div>
+    <table style="width:100%;font-size:13.5px;margin-bottom:18px;">
+      <thead>
+        <tr>
+          <th style="text-align:left;">Market</th>
+          <th style="text-align:left;">Channel</th>
+          <th style="text-align:right;">Months with activity</th>
+          <th style="text-align:right;">Months <strong>missing spend</strong></th>
+          <th style="text-align:right;">Revenue</th>
+          <th style="text-align:right;">Spend recorded</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in sti.channel_breakdown %}
+        <tr {% if r.market == 'English' %}style="background:#fff0ec;"{% endif %}>
+          <td>{{ r.market }}</td>
+          <td>{{ r.channel }}</td>
+          <td style="text-align:right;">{{ r.months_with_activity }}</td>
+          <td style="text-align:right;color:#c54646;"><strong>{{ r.months_missing_spend }}</strong></td>
+          <td style="text-align:right;">€{{ "{:,}".format(r.revenue) }}</td>
+          <td style="text-align:right;">€{{ "{:,}".format(r.spend) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;color:var(--ink);margin:18px 0 8px;">
+      Three concrete signals that this is a tracking gap, not a business reality
+    </div>
+    <ol style="font-size:13.5px;color:#444;line-height:1.65;padding-left:20px;margin-bottom:18px;">
+      <li><strong>English market is the obvious outlier.</strong> Four of its five active paid channels (Google, TikTok, IG-Influencer, Influencer Podcast) report <em>zero spend across all 12 months</em> while still booking revenue. This is implausible operationally — it points to ad accounts that were never connected to the spend ETL.</li>
+      <li><strong>Youtube Ads has zero spend in all three markets but ~€11k of revenue.</strong> Uniform across markets is a tell-tale sign of a category-naming mismatch — Youtube spend is almost certainly being booked under "Google Ads" at source (Google Ads UI bundles them) and never re-classified in this dataset.</li>
+      <li><strong>Influencer Podcast is mostly 0-spend across all markets.</strong> Consistent with industry norms — many podcast deals are barter, gifted, or revshare and may genuinely have €0 cash spend. This subset is real, not a tracking bug.</li>
+    </ol>
+
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;color:var(--ink);margin:18px 0 8px;">
+      Why English ROAS specifically is unreliable
+    </div>
+    <div style="font-size:13.5px;color:#444;line-height:1.65;margin-bottom:18px;">
+      English reports <strong>ROAS = 0.87</strong>, but <strong>64% of its revenue (€210k of €330k) has no matching spend in the dataset</strong>. The reported figure is computed almost entirely from <em>Facebook/Instagram Ads</em> (the only channel with any tracked spend) — meaning English's ROAS effectively measures one channel's performance, not the whole market. Any like-for-like comparison with German (ROAS 1.17) or French (0.85) is invalid: we are comparing a near-complete picture in DACH to a quarter-picture in English. Recommendations to scale or cut English-market spend should be paused until the data is reconciled.
+    </div>
+
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;color:var(--ink);margin:18px 0 8px;">
+      Recommended actions
+    </div>
+    <ol style="font-size:13.5px;color:#444;line-height:1.65;padding-left:20px;margin-bottom:0;">
+      <li><strong>Audit the spend ETL</strong>: confirm every English-market ad account (Google Ads, TikTok Ads Manager, Meta IG-Influencer line items) is connected and that spend rows are joined on the same channel-3 keys used by conversion data.</li>
+      <li><strong>Fix the Youtube Ads/Google Ads mapping</strong> at the source — either split YT spend out of Google Ads invoices or remap "Youtube Ads" conversions under "Google Ads" consistently across the warehouse.</li>
+      <li><strong>Tag known non-cash channels</strong> (barter podcasts, gifted influencer episodes) explicitly so future analysis can distinguish "no spend" from "spend missing".</li>
+      <li><strong>Until fixes ship</strong>: report English ROAS only at the Facebook/IG channel level, and flag the market in dashboards as "partial coverage". Use German + French for any cross-market comparison.</li>
+      <li><strong>Add a CI check to the data pipeline</strong>: any row with <code>Conversion Channel 1 = Paid</code> AND <code>Marketing Spendings = 0</code> AND <code>Revenue &gt; 0</code> should raise a warning to the data team.</li>
+    </ol>
+  </div>
+  {% endif %}
 
   <div class="table-wrap" style="margin-bottom:40px;">
     <table>
