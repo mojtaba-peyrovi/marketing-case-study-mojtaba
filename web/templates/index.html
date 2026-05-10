@@ -498,14 +498,6 @@
     </div>
   </div>
 
-  <!-- Synthesis -->
-  <div class="card card-lavender" style="margin-top:32px;">
-    <div class="card-eyebrow">Implication</div>
-    <p style="font-family:'Fraunces',Georgia,serif;font-size:18px;color:var(--ink);line-height:1.55;margin:6px 0 0 0;">
-      <strong>The pattern:</strong> spend is concentrated in the <em>premium</em> quadrant — one channel costing more than the median to acquire trials of just-average quality. The <em>efficient + high-quality</em> quadrant — where every euro should multiply — is occupied almost entirely by a single under-funded channel.<br><br>
-      <strong>The implication:</strong> the next million should not go where the existing million already lives. It should fund the under-invested quadrant, not the dominant one.
-    </p>
-  </div>
 </section>
 
 <!-- ============================================================ -->
@@ -695,17 +687,6 @@
     </div>
 
     <div class="metric-def-card">
-      <div class="metric-def-name">Revenue per Paying Subscriber (ARPU)</div>
-      <div class="metric-def-formula">New Revenue (Invoice Date) ÷ (Monthly Paid + Yearly Paid Conversions)</div>
-      <div class="metric-def-note">
-        <strong>Why use Invoice Date here?</strong> ARPU reflects actual cash received per paying subscriber — the most useful number for understanding subscription value by market. Monthly subscribers pay immediately; yearly subscribers pay after 30 days. Invoice Date captures both correctly.
-      </div>
-      <div class="metric-def-example">
-        Example: French-language audience invoice revenue ÷ French-language paid conversions = <strong>€{{ "%.2f"|format(d.markets[1].arpu) }} per paying subscriber</strong>
-      </div>
-    </div>
-
-    <div class="metric-def-card">
       <div class="metric-def-name">Spend Growth % (efficiency gap)</div>
       <div class="metric-def-formula">(December value ÷ January value − 1) × 100, calculated separately for spend and for paid conversions</div>
       <div class="metric-def-note">
@@ -846,19 +827,19 @@
     <table>
       <thead>
         <tr>
+          <th>Priority</th>
           <th>Missing data</th>
           <th>Business impact of the gap</th>
           <th>Where to get it</th>
-          <th>Priority</th>
         </tr>
       </thead>
       <tbody>
         {% for g in gaps.data_gaps %}
         <tr>
+          <td style="white-space:nowrap;"><span class="priority-{{ g.priority|lower }}">{{ g.priority }}</span></td>
           <td style="max-width:180px;"><strong>{{ g.gap }}</strong></td>
           <td style="max-width:300px;">{{ g.impact }}</td>
           <td style="max-width:260px;">{{ g.suggested_data_source }}</td>
-          <td><span class="priority-{{ g.priority|lower }}">{{ g.priority }}</span></td>
         </tr>
         {% endfor %}
       </tbody>
