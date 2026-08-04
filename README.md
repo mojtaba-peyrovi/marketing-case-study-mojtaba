@@ -1,12 +1,15 @@
-# Marketing Campaign Analysis
+# Marketing Campaign Analysis — Case Study
 
-An editorial-style data analysis case study presenting 2024 marketing campaign insights
-to the CEO of a subscription-based audio content platform. Built as a fully
+An anonymized, editorial-style data analysis case study presenting 2024 marketing campaign
+insights to the CEO of a subscription-based audio content platform. Built as a fully
 containerized web application with interactive charts and a magazine-style UI.
+
+> Company name and identifying details have been replaced with generic placeholders
+> ("the Company") throughout this case study for public sharing.
 
 ## Live Demo
 
-**https://marketing-case-study-mojtaba-t4j662qnoa-ew.a.run.app** (GCP Cloud Run, europe-west1)
+**https://marketing-case-study-mojtaba-396340266386.europe-west1.run.app** (GCP Cloud Run, europe-west1)
 
 ## Quick Start
 

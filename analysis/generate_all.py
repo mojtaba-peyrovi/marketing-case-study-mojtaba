@@ -36,7 +36,7 @@ def _load_script(filename):
 
 def main():
     print("=" * 55)
-    print("  Campaign Analysis — Generating outputs")
+    print("  Marketing Campaign Analysis — Generating outputs")
     print("=" * 55)
 
     t0 = time.time()

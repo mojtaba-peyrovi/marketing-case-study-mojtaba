@@ -34,7 +34,7 @@ MARKET_COLORS = {
 
 
 def apply_brand_style():
-    """Apply global matplotlib style matching the Company branding."""
+    """Apply global matplotlib style matching the Company's branding."""
     mpl.rcParams.update({
         "figure.facecolor":   BG,
         "axes.facecolor":     BG,

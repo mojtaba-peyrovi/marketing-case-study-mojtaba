@@ -1,10 +1,11 @@
-# Marketing Campaign Analysis
+# Marketing Campaign Analysis — Case Study
 
 ## Project Overview
 
-Senior Data Analyst case study for the Company. Analyzes a 2024 Marketing Campaign Performance
-Dataset (1,152 rows × 17 columns) across 4 markets and 24 conversion channels, delivering
-CEO-level actionable insights via a branded web UI.
+Senior Data Analyst case study, anonymized for public sharing (real company name and
+identifying details replaced with "the Company"). Analyzes a 2024 Marketing Campaign
+Performance Dataset (1,152 rows × 17 columns) across 4 markets and 24 conversion channels,
+delivering CEO-level actionable insights via a branded web UI.
 
 **Five deliverables answered:**
 1. Executive Summary — key findings and recommendations
