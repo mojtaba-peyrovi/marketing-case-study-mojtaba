@@ -9,7 +9,7 @@ containerized web application with interactive charts and a magazine-style UI.
 
 ## Live Demo
 
-**https://marketing-case-study-mojtaba-396340266386.europe-west1.run.app** (GCP Cloud Run, europe-west1)
+**https://marketing-case-study-mojtaba-t4j662qnoa-ew.a.run.app** (GCP Cloud Run, europe-west1)
 
 ## Quick Start
 
