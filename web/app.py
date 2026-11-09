@@ -10,8 +10,12 @@ import json
 import os
 
 from flask import Flask, render_template, send_from_directory
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
+# Cloud Run terminates TLS at its proxy; trust X-Forwarded-Proto/Host so
+# absolute URLs (e.g. the og:image link for social previews) use https.
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "output")
 DATA_DIR   = os.path.join(OUTPUT_DIR, "data")
