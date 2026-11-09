@@ -33,6 +33,14 @@ def load_data():
     # Normalise column names
     df.columns = [c.strip() for c in df.columns]
 
+    # Anonymise: the raw data labels the company's own podcast with the brand name
+    # ("<Brand> Podcast"). Any podcast channel other than "Influencer Podcast" is
+    # the owned one, so relabel it without spelling out the brand.
+    channel_cols = [c for c in df.columns if c.startswith("Conversion Channel")]
+    df[channel_cols] = df[channel_cols].replace(
+        to_replace=r"^\s*(?!Influencer\b)\S+\s+Podcast\s*$", value="Owned Podcast", regex=True
+    )
+
     # Derived columns
     df["month_name"] = df["Business Month"].map(MONTH_NAMES)
     df["is_unknown"] = (

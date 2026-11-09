@@ -13,3 +13,5 @@ docs/*.xlsx
 docs/*.pdf
 *.txt
 data/
+docs/
+.claude
